@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Geometry Dash JS</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #1a1a2e;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        canvas {
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px #0f3460;
+            background: linear-gradient(to bottom, #16213e, #1a1a2e);
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 #e94560;
+        }
+
+        p {
+            margin: 5px 0;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="ui">
+        <h1>Geometry Dash JS</h1>
+        <p>Press SPACE to Jump / Fly</p>
+        <p id="score">Score: 0</p>
+    </div>
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game Constants
+        const GRAVITY = 0.6;
+        const JUMP_FORCE = -11;
+        const ROCKET_FORCE = -0.4;
+        const ROCKET_GRAVITY = 0.25;
+        const GROUND_Y = 380;
+        const SPEED = 6;
+
+        // Assets (Simulated with drawing)
+        const COLORS = {
+            player: '#ffd700', // Gold
+            spike: '#e94560',  // Red
+            block: '#0f3460',  // Dark Blue
+            ground: '#16213e',
+            portal: '#00ff00'
+        };
+
+        // Game State
+        let gameState = 'playing'; // playing, gameover
+        let score = 0;
+        let mode = 'cube'; // cube, rocket
+        let frames = 0;
+
+        // Player Object
+        const player = {
+            x: 100,
+            y: GROUND_Y - 40,
+            w: 40,
+            h: 40,
+            dy: 0,
+            rotation: 0,
+            onGround: true,
+
+            update: function () {
+                if (gameState !== 'playing') return;
+
+                // Physics based on mode
+                if (mode === 'cube') {
+                    this.dy += GRAVITY;
+                    this.y += this.dy;
+
+                    // Rotation
+                    if (!this.onGround) {
+                        this.rotation += 0.15;
+                    } else {
+                        // Snap rotation
+                        const r = this.rotation % (Math.PI / 2);
+                        if (r < 0.1) this.rotation -= r;
+                    }
+                } else if (mode === 'rocket') {
+                    this.dy += ROCKET_GRAVITY;
+                    this.y += this.dy;
+                    this.rotation = this.dy * 0.1;
+                    this.onGround = false;
+                }
+
+                // Ground Collision
+                if (this.y + this.h > GROUND_Y) {
+                    this.y = GROUND_Y - this.h;
+                    this.dy = 0;
+                    this.onGround = true;
+                    if (mode === 'rocket') this.y = GROUND_Y - this.h; // Slide on ground
+                } else {
+                    this.onGround = false;
+                }
+
+                // Ceiling Collision (Rocket only mostly)
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.dy = 0;
+                }
+            },
+
+            draw: function () {
+                ctx.save();
+                ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
+                ctx.rotate(this.rotation);
+
+                // Draw Body
+                ctx.fillStyle = COLORS.player;
+                ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+
+                // Draw Face (Geometry Dash style)
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(-this.w / 2, -this.h / 2, this.w, this.h);
+
+                // Inner square
+                ctx.fillStyle = '#00000040';
+                ctx.fillRect(-this.w / 4, -this.h / 4, this.w / 2, this.h / 2);
+
+                ctx.restore();
+            },
+
+            jump: function () {
+                if (mode === 'cube') {
+                    if (this.onGround) {
+                        this.dy = JUMP_FORCE;
+                        this.onGround = false;
+                    }
+                } else if (mode === 'rocket') {
+                    this.dy += ROCKET_FORCE; // Flappy bird style push
+                    // Cap velocity
+                    if (this.dy < -7) this.dy = -7;
+                }
+            }
+        };
+
+        // Obstacles
+        const obstacles = [];
+
+        class Obstacle {
+            constructor(x, type) {
+                this.x = x;
+                this.type = type; // 'spike', 'block', 'portal'
+                this.w = 40;
+                this.h = 40;
+                this.passed = false;
+            }
+
+            update() {
+                this.x -= SPEED;
+            }
+
+            draw() {
+                if (this.type === 'spike') {
+                    ctx.fillStyle = COLORS.spike;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, GROUND_Y);
+                    ctx.lineTo(this.x + 20, GROUND_Y - 40);
+                    ctx.lineTo(this.x + 40, GROUND_Y);
+                    ctx.fill();
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                } else if (this.type === 'block') {
+                    ctx.fillStyle = COLORS.block;
+                    ctx.fillRect(this.x, GROUND_Y - 40, 40, 40);
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(this.x, GROUND_Y - 40, 40, 40);
+                } else if (this.type === 'portal') {
+                    ctx.fillStyle = '#00ff00';
+                    ctx.fillRect(this.x, GROUND_Y - 100, 20, 80);
+                }
+            }
+        }
+
+        // Input
+        const keys = {};
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (gameState === 'playing') {
+                    // Continuous hold for rocket, single press for cube
+                    keys['Space'] = true;
+                    if (mode === 'cube') player.jump();
+                } else {
+                    resetGame();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') keys['Space'] = false;
+        });
+
+        document.addEventListener('mousedown', () => {
+            if (gameState === 'playing') {
+                keys['Space'] = true;
+                if (mode === 'cube') player.jump();
+            } else {
+                resetGame();
+            }
+        });
+        document.addEventListener('mouseup', () => keys['Space'] = false);
+
+
+        function spawnObstacles() {
+            if (frames % 90 === 0) {
+                const rand = Math.random();
+                if (rand > 0.9) {
+                    obstacles.push(new Obstacle(canvas.width, 'portal'));
+                } else if (rand > 0.6) {
+                    obstacles.push(new Obstacle(canvas.width, 'spike'));
+                } else {
+                    // Create a small tower
+                    obstacles.push(new Obstacle(canvas.width, 'block'));
+                }
+            }
+        }
+
+        function checkCollisions() {
+            // Player Bounds
+            const pLeft = player.x + 5; // hitbox adjustments
+            const pRight = player.x + player.w - 5;
+            const pTop = player.y + 5;
+            const pBottom = player.y + player.h - 5;
+
+            obstacles.forEach(obs => {
+                // Simple AABB
+                let oLeft = obs.x;
+                let oRight = obs.x + obs.w;
+                let oTop = GROUND_Y - obs.h;
+                let oBottom = GROUND_Y;
+
+                if (obs.type === 'spike') {
+                    // Smaller hitbox for spike
+                    oLeft += 10;
+                    oRight -= 10;
+                    oTop += 10;
+                }
+
+                if (pRight > oLeft + 10 && pLeft < oRight - 10 && pBottom > oTop + 10 && pTop < oBottom - 10) {
+                    // Collision
+                    if (obs.type === 'portal') {
+                        mode = (mode === 'cube') ? 'rocket' : 'cube';
+                        // Visual feedback for switch
+                        player.dy = 0;
+                        // Remove portal so we don't switch back instantly
+                        obs.passed = true;
+                        obstacles.splice(obstacles.indexOf(obs), 1);
+                    } else {
+                        gameState = 'gameover';
+                    }
+                }
+            });
+        }
+
+        function gameOver() {
+            gameState = 'gameover';
+        }
+
+        function resetGame() {
+            player.y = GROUND_Y - 40;
+            player.dy = 0;
+            player.rotation = 0;
+            obstacles.length = 0;
+            score = 0;
+            frames = 0;
+            mode = 'cube';
+            gameState = 'playing';
+            loop();
+        }
+
+        function loop() {
+            if (gameState !== 'playing') {
+                ctx.fillStyle = 'white';
+                ctx.font = '40px Arial';
+                ctx.fillText("GAME OVER", canvas.width / 2 - 110, canvas.height / 2);
+                ctx.font = '20px Arial';
+                ctx.fillText("Click or Press Space to Restart", canvas.width / 2 - 130, canvas.height / 2 + 40);
+                return;
+            }
+
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Ground
+            ctx.fillStyle = COLORS.ground;
+            ctx.fillRect(0, GROUND_Y, canvas.width, canvas.height - GROUND_Y);
+            // Ground Line
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, GROUND_Y);
+            ctx.lineTo(canvas.width, GROUND_Y);
+            ctx.stroke();
+
+            // Logic
+            if (mode === 'rocket' && keys['Space']) {
+                player.jump();
+            }
+
+            player.update();
+            player.draw();
+
+            spawnObstacles();
+
+            obstacles.forEach((obs, index) => {
+                obs.update();
+                obs.draw();
+
+                // Remove off-screen
+                if (obs.x + obs.w < 0) {
+                    obstacles.splice(index, 1);
+                    score++;
+                    document.getElementById('score').innerText = "Score: " + score;
+                }
+            });
+
+            checkCollisions();
+
+            frames++;
+            requestAnimationFrame(loop);
+        }
+
+        // Start
+        loop();
+
+    </script>
+</body>
+
+</html>

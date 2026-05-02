@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflex Check</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            cursor: pointer;
+            transition: color 0.1s;
+            user-select: none;
+            text-align: center;
+            background-color: white;
+            /* Always white background */
+            color: #333;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: none;
+        }
+
+        p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Game States - Text colors handled below */
+
+        /* Red (Fail) */
+
+        /* Text Color States */
+        body.waiting h1 {
+            color: #ce2636;
+        }
+
+        /* Red Text */
+        body.go h1 {
+            color: #4bdb6a;
+        }
+
+        /* Green Text */
+        body.early h1 {
+            color: #ce2636;
+        }
+
+        /* Red Text */
+
+        #timer {
+            font-size: 6rem;
+            font-weight: bold;
+            color: black;
+            font-variant-numeric: tabular-nums;
+            margin-top: 1rem;
+        }
+
+        #icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="controls" style="margin-bottom: 20px;">
+        <label>
+            <input type="radio" name="cueType" value="visual" checked> Visual Cue
+        </label>
+        <label style="margin-left: 15px;">
+            <input type="radio" name="cueType" value="audio"> Audio Cue
+        </label>
+    </div>
+
+    <div id="icon">⚡️</div>
+    <h1 id="main-text">Reflex Check</h1>
+    <div id="timer">00:00:00</div>
+    <p id="sub-text">Press <strong>SPACEBAR</strong> or click anywhere to start.</p>
+
+    <script>
+        // State: 'start', 'waiting' (red), 'go' (green), 'result'
+        let state = 'start';
+        let startTime = 0;
+        let timeoutId = null;
+        let animationFrameId = null;
+        let audioCtx = null;
+
+        const mainText = document.getElementById('main-text');
+        const subText = document.getElementById('sub-text');
+        const icon = document.getElementById('icon');
+        const timerEl = document.getElementById('timer');
+        const body = document.body;
+        const cueRadios = document.getElementsByName('cueType');
+
+        function formatTime(ms) {
+            const minutes = Math.floor(ms / 60000);
+            const seconds = Math.floor((ms % 60000) / 1000);
+            const centiseconds = Math.floor((ms % 1000) / 10);
+
+            return (
+                minutes.toString().padStart(2, '0') + ':' +
+                seconds.toString().padStart(2, '0') + ':' +
+                centiseconds.toString().padStart(2, '0')
+            );
+        }
+
+        function setVisuals(cls, main, sub, ico) {
+            body.className = cls;
+            mainText.innerText = main;
+            subText.innerHTML = sub;
+            icon.innerText = ico;
+        }
+
+        function updateTimer() {
+            if (state === 'go') {
+                const elapsed = Math.round(performance.now() - startTime);
+                timerEl.innerText = formatTime(elapsed);
+                animationFrameId = requestAnimationFrame(updateTimer);
+            }
+        }
+
+        function getCueType() {
+            for (const radio of cueRadios) {
+                if (radio.checked) return radio.value;
+            }
+            return 'visual';
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playBeep() {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function startGame() {
+            initAudio();
+            state = 'waiting';
+            setVisuals('waiting', 'Wait for it...', 'Do not press yet.', '🛑');
+            timerEl.innerText = "00:00:00";
+
+            // Random delay between 2 and 5 seconds
+            const delay = Math.floor(Math.random() * 3000) + 2000;
+
+            timeoutId = setTimeout(() => {
+                state = 'go';
+                const cueType = getCueType();
+
+                if (cueType === 'audio') {
+                    playBeep();
+                    // Keep visuals simple for audio cue, or mimic visual cue? 
+                    // User said: "visual looks the same, audio just makes a noise and starts timer."
+                    // I'll keep the visual change to green as feedback is good, but the *cue* is the sound.
+                    setVisuals('go', 'PRESS NOW!', 'You heard the beep!', '🔊');
+                } else {
+                    setVisuals('go', 'PRESS NOW!', 'Quick! Hit Space!', '🚀');
+                }
+
+                startTime = performance.now();
+                updateTimer(); // Start timer loop
+            }, delay);
+        }
+
+        function handleInput(e) {
+            // Prevent default spacebar scrolling
+            if (e.type === 'keydown' && e.code === 'Space') {
+                e.preventDefault();
+            }
+
+            // Prevent interaction with radio buttons from triggering game logic
+            if (e.target.type === 'radio') return;
+
+            if (state === 'start' || state === 'result') {
+                startGame();
+            } else if (state === 'waiting') {
+                // Too early
+                clearTimeout(timeoutId);
+                state = 'result';
+                setVisuals('early', 'Too Early!', 'You pressed before the cue. Click to try again.', '⚠️');
+                timerEl.innerText = "FAIL";
+            } else if (state === 'go') {
+                // Success
+                const reactionTime = Math.round(performance.now() - startTime);
+                cancelAnimationFrame(animationFrameId); // Stop timer loop
+                state = 'result';
+                setVisuals('', 'Good Job!', 'Click to try again.', '⚡️');
+                timerEl.innerText = formatTime(reactionTime);
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                handleInput(e);
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            handleInput(e);
+        });
+
+    </script>
+</body>
+
+</html>

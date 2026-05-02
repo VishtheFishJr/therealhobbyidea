@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Letter Counting Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #letters {
+            margin: 25px;
+            font-size: 60px;
+            min-height: 90px;
+            letter-spacing: 10px;
+        }
+
+        button {
+            font-size: 22px;
+            margin: 6px;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-radius: 12px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            font-size: 26px;
+            margin-top: 20px;
+            height: 40px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Count the Letters!</h1>
+
+    <button onclick="startGame()">Start</button>
+
+    <div id="letters"></div>
+    <div id="buttons"></div>
+    <div id="result"></div>
+
+    <script>
+        let correctAnswer = 0;
+
+        // Alphabet
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        function startGame() {
+            const lettersDiv = document.getElementById("letters");
+            const resultDiv = document.getElementById("result");
+
+            lettersDiv.innerHTML = "";
+            resultDiv.innerHTML = "";
+
+            // Random number 1–9
+            correctAnswer = Math.floor(Math.random() * 9) + 1;
+
+            // Random letter
+            const letter = alphabet[Math.floor(Math.random() * alphabet.length)];
+
+            // Show repeated letters
+            for (let i = 0; i < correctAnswer; i++) {
+                lettersDiv.innerHTML += letter;
+            }
+
+            createButtons();
+        }
+
+        function createButtons() {
+            const buttonsDiv = document.getElementById("buttons");
+            buttonsDiv.innerHTML = "";
+
+            for (let i = 1; i <= 9; i++) {
+                let btn = document.createElement("button");
+                btn.innerText = i;
+                btn.onclick = () => checkAnswer(i);
+                buttonsDiv.appendChild(btn);
+            }
+        }
+
+        function checkAnswer(choice) {
+            const resultDiv = document.getElementById("result");
+
+            if (choice === correctAnswer) {
+                resultDiv.innerHTML = "Good job!";
+                setTimeout(startGame, 1200);
+            } else {
+                const messages = [
+                    "Oops! Count again!",
+                    "Not quite! Try slowly!",
+                    "Almost! Look carefully!",
+                    "Try one more time!"
+                ];
+                resultDiv.innerHTML =
+                    messages[Math.floor(Math.random() * messages.length)];
+            }
+        }
+
+        // Create buttons on load
+        createButtons();
+    </script>
+
+</body>
+
+</html>

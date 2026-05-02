@@ -1,0 +1,145 @@
+<script>
+    console.log("hello students.");
+
+    let name = "John";
+    console.log(name);
+
+    let marks = 90;
+    if (marks > 50) {
+        console.log("pass");
+    }
+    else {
+        console.log("fail");
+    }
+
+    for (let i = 1; i < 5; i++) {
+        console.log(i);
+    }
+
+    let students = ["John", "Jane", "Jack", "Jill"];
+    for (let s of students) {
+        console.log(s);
+    }
+
+    function greet(name) {
+        console.log("hello " + name);
+    }
+    greet("John");
+
+</script>
+
+<!DOCTYPE html>
+<html>
+
+<body style="color: red; height: 100vh; margin: 0; background: linear-gradient(to bottom, white 50%, black 50%);">
+    <h1 id="title"></h1>
+    <script>
+        document.getElementById("title").innerText = "hello students";
+    </script>
+
+    <h2 id="output"></h2>
+    <script>
+        let text = "";
+
+        for (let i = 1; i <= 5; i++) {
+            text += i + "<br>";
+        }
+        document.getElementById("output").innerHTML = text;
+
+    </script>
+
+    <h1 id="msg">hello</h1>
+
+    <button onclick="change()">click me</button>
+
+    <script>
+        function change() {
+            document.getElementById("msg").innerText = "woohoo";
+        }
+    </script>
+
+    <h2 id="num">0</h2>
+
+    <button onclick="add()">+</button>
+
+    <button onclick="sub()">-</button>
+
+    <button onclick="mul()">*</button>
+
+    <button onclick="div()">/</button>
+
+    <button onclick="exp()">^</button>
+
+    <button id="pauseBtn" onclick="togglePause()">Pause</button>
+
+    <script>
+        let n = 0;
+        function exp() {
+            n = n ** n;
+            document.getElementById("num").innerText = n;
+        }
+        function mul() {
+            n = n * 2;
+            document.getElementById("num").innerText = n;
+        }
+        function div() {
+            n = n / n;
+            document.getElementById("num").innerText = n;
+        }
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        let isTopWhite = true;
+
+        function add() {
+            n++;
+            document.getElementById("num").innerText = n;
+            if (n % 10 === 0) {
+                isTopWhite = !isTopWhite;
+                if (isTopWhite) {
+                    document.body.style.background = "linear-gradient(to bottom, white 50%, black 50%)";
+                } else {
+                    document.body.style.background = "linear-gradient(to bottom, black 50%, white 50%)";
+                }
+            }
+        }
+
+        function sub() {
+            n--;
+            document.getElementById("num").innerText = n;
+        }
+
+        let intervalId = setInterval(add, 200);
+        let isPaused = false;
+
+        function togglePause() {
+            if (isPaused) {
+                intervalId = setInterval(add, 200);
+                isPaused = false;
+                document.getElementById("pauseBtn").innerText = "Pause";
+            } else {
+                clearInterval(intervalId);
+                isPaused = true;
+                document.getElementById("pauseBtn").innerText = "Resume";
+            }
+        }
+
+        // Spacebar listener
+        document.addEventListener('keydown', function (event) {
+            if (event.code === 'Space') {
+                // Prevent scrolling if default behavior
+                event.preventDefault();
+                togglePause();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
