@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Presser</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            user-select: none;
+            /* Prevent text selection during mash */
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        #game-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            min-width: 300px;
+        }
+
+        #timer {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffeb3b;
+            margin: 1rem 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #counter {
+            font-size: 8rem;
+            font-weight: 900;
+            margin: 0;
+            line-height: 1;
+            transition: transform 0.05s;
+        }
+
+        .bump {
+            transform: scale(1.1);
+        }
+
+        #message {
+            font-size: 2rem;
+            height: 3rem;
+            /* maintain space */
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: #00e676;
+        }
+
+        button {
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Speed Presser!</h1>
+    <div class="subtitle">Mash SPACEBAR as fast as you can!</div>
+
+    <div id="game-container">
+        <div id="message">Ready?</div>
+        <div id="timer">5.00</div>
+        <div id="counter">0</div>
+        <div style="margin-top: 30px;">
+            <button id="startBtn" onclick="startGame()">Start Game</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 5.00;
+        let gameActive = false;
+        let countdownActive = false;
+        let timerInterval;
+
+        const counterEl = document.getElementById('counter');
+        const timerEl = document.getElementById('timer');
+        const msgEl = document.getElementById('message');
+        const startBtn = document.getElementById('startBtn');
+
+        function startGame() {
+            // Reset state
+            score = 0;
+            timeLeft = 5.00;
+            counterEl.innerText = score;
+            timerEl.innerText = timeLeft.toFixed(2);
+            startBtn.disabled = true;
+            startBtn.classList.add('hidden');
+            msgEl.innerText = "Get Ready...";
+
+            // Start Countdown
+            countdownActive = true;
+            let count = 3;
+
+            msgEl.innerText = count;
+
+            let countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    msgEl.innerText = count;
+                } else if (count === 0) {
+                    msgEl.innerText = "GO!";
+                } else {
+                    clearInterval(countdownInterval);
+                    startActivePhase();
+                }
+            }, 1000);
+        }
+
+        function startActivePhase() {
+            countdownActive = false;
+            gameActive = true;
+            msgEl.innerText = "MASH SPACE!";
+
+            const initialTime = Date.now();
+            const duration = 5000;
+
+            timerInterval = setInterval(() => {
+                const elapsed = Date.now() - initialTime;
+                const remaining = Math.max(0, duration - elapsed);
+
+                timerEl.innerText = (remaining / 1000).toFixed(2);
+
+                if (remaining <= 0) {
+                    endGame();
+                }
+            }, 10);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            gameActive = false;
+            msgEl.innerText = "TIME'S UP!";
+            startBtn.disabled = false;
+            startBtn.classList.remove('hidden');
+            startBtn.innerText = "Play Again";
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent scrolling
+
+                if (gameActive) {
+                    score++;
+                    counterEl.innerText = score;
+
+                    // Visual feedback
+                    counterEl.classList.add('bump');
+                    setTimeout(() => counterEl.classList.remove('bump'), 50);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Street Hoops</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+        }
+
+        #score {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="ui">
+        <div id="score">0</div>
+    </div>
+    <div id="instructions">Drag back on the ball to shoot!</div>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+
+        // --- Game Constants ---
+        const GRAVITY = 0.6;
+        const FRICTION = 1;
+        const BOUNCE = 0.65;
+        const DRAG_POWER = 0.5;
+        const MAX_DRAG_DIST = 400;
+        const SIDE_MARGIN = 300;
+
+        let width, height;
+        let score = 0;
+
+        let isDragging = false;
+        let dragStartX, dragStartY;
+        let dragCurrentX, dragCurrentY;
+
+        const ball = {
+            x: 0,
+            y: 0,
+            vx: 0,
+            vy: 0,
+            radius: 20,
+            color: '#ff6b6b',
+            isIdle: true,
+            rotation: 0,
+            reset: function () {
+                this.x = SIDE_MARGIN + Math.random() * (width - 2 * SIDE_MARGIN);
+                this.y = height - 200;
+                this.vx = 0;
+                this.vy = 0;
+                this.isIdle = true;
+                this.rotation = 0;
+
+                // Smaller hoop
+                hoop.width = 80;
+                hoop.x = SIDE_MARGIN + Math.random() * (width - 2 * SIDE_MARGIN - hoop.width);
+            }
+        };
+
+        const hoop = {
+            x: 0,
+            y: 200,
+            width: 80,
+            rimRadius: 5,
+            backboardWidth: 10,
+            backboardHeight: 100,
+            netHeight: 60,
+            netThickness: 4,
+            hasScored: false
+        };
+
+        const obstacles = [];
+        const particles = [];
+
+        class Obstacle {
+            constructor(x, y, w, h, speedX, speedY, rangeX = 0, rangeY = 0) {
+                this.x = x;
+                this.y = y;
+                this.w = w;
+                this.h = h;
+                this.baseX = x;
+                this.baseY = y;
+                this.speedX = speedX;
+                this.speedY = speedY;
+                this.rangeX = rangeX;
+                this.rangeY = rangeY;
+                this.color = '#4ecca3';
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.rangeX > 0 && (this.x > this.baseX + this.rangeX || this.x < this.baseX - this.rangeX)) this.speedX *= -1;
+                if (this.rangeY > 0 && (this.y > this.baseY + this.rangeY || this.y < this.baseY - this.rangeY)) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.w, this.h);
+            }
+        }
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 5 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.03 + 0.01;
+                this.color = `hsl(${Math.random() * 60 + 10}, 100%, 50%)`;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.2;
+                this.life -= this.decay;
+            }
+
+            draw() {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            if (ball.isIdle) ball.reset();
+        }
+
+        function init() {
+            window.addEventListener('resize', resize);
+            resize();
+            ball.reset();
+
+            // Obstacles
+            obstacles.push(new Obstacle(width * 0.4, height * 0.5, 30, 150, 0, 3, 0, 100));
+            obstacles.push(new Obstacle(width * 0.6, height * 0.6, 100, 20, 3, 0, 150, 0));
+            obstacles.push(new Obstacle(width * 0.7, height * 0.3, 20, 120, 0, 4, 0, 120));
+
+            // Input
+            canvas.addEventListener('mousedown', startDrag);
+            canvas.addEventListener('mousemove', updateDrag);
+            window.addEventListener('mouseup', endDrag);
+            canvas.addEventListener('touchstart', (e) => startDrag(e.touches[0]));
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); updateDrag(e.touches[0]); });
+            window.addEventListener('touchend', endDrag);
+
+            loop();
+        }
+
+        function mouseInCircle(mx, my, cx, cy, r) {
+            const dx = mx - cx;
+            const dy = my - cy;
+            return dx * dx + dy * dy < r * r;
+        }
+
+        function startDrag(e) {
+            if (ball.isIdle && mouseInCircle(e.clientX, e.clientY, ball.x, ball.y, ball.radius * 3)) {
+                isDragging = true;
+                dragStartX = ball.x;
+                dragStartY = ball.y;
+                dragCurrentX = e.clientX;
+                dragCurrentY = e.clientY;
+            }
+        }
+
+        function updateDrag(e) {
+            if (isDragging) {
+                dragCurrentX = e.clientX;
+                dragCurrentY = e.clientY;
+            }
+        }
+
+        function endDrag() {
+            if (isDragging) {
+                isDragging = false;
+                ball.isIdle = false;
+                let dx = dragStartX - dragCurrentX;
+                let dy = dragStartY - dragCurrentY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist > MAX_DRAG_DIST) { const ratio = MAX_DRAG_DIST / dist; dx *= ratio; dy *= ratio; }
+                const powerScale = dist / MAX_DRAG_DIST;
+                const realisticScale = Math.pow(powerScale, 1.5);
+                ball.vx = dx * DRAG_POWER * realisticScale;
+                ball.vy = dy * DRAG_POWER * realisticScale;
+                ball.rotation = ball.vx * 0.1;
+            }
+        }
+
+        function spawnConfetti(x, y) {
+            for (let i = 0; i < 30; i++) particles.push(new Particle(x, y));
+        }
+
+        function update() {
+            obstacles.forEach(obs => obs.update());
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                if (particles[i].life <= 0) particles.splice(i, 1);
+            }
+
+            if (!ball.isIdle) {
+                ball.vy += GRAVITY;
+                ball.vx *= FRICTION;
+                ball.vy *= FRICTION;
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+                ball.rotation += ball.vx * 0.05;
+
+                if (ball.x + ball.radius > width) { ball.x = width - ball.radius; ball.vx *= -BOUNCE; }
+                if (ball.x - ball.radius < 0) { ball.x = ball.radius; ball.vx *= -BOUNCE; }
+                if (ball.y + ball.radius > height) { ball.y = height - ball.radius; ball.vy *= -BOUNCE; if (Math.abs(ball.vy) < 1 && Math.abs(ball.vx) < 1) setTimeout(() => { if (!isDragging && !ball.isIdle) ball.reset(); }, 1000); }
+
+                // Hoop and net collision
+                // Net as solid rectangle
+                const netTop = hoop.y;
+                const netBottom = hoop.y + hoop.netHeight;
+                const netLeft = hoop.x + 0;
+                const netRight = hoop.x + hoop.width;
+
+                if (ball.x + ball.radius > netLeft && ball.x - ball.radius < netRight &&
+                    ball.y + ball.radius > netTop && ball.y - ball.radius < netBottom) {
+                    // simple reflection off net
+                    if (ball.vy > 0) ball.vy *= -BOUNCE;
+                    if (ball.vx > 0) ball.vx *= -BOUNCE;
+                }
+
+                // Rim collision
+                const checkRim = (rx, ry) => {
+                    const dx = ball.x - rx;
+                    const dy = ball.y - ry;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < ball.radius + hoop.rimRadius) {
+                        const nx = dx / d;
+                        const ny = dy / d;
+                        const dot = ball.vx * nx + ball.vy * ny;
+                        ball.vx = (ball.vx - 2 * dot * nx) * BOUNCE;
+                        ball.vy = (ball.vy - 2 * dot * ny) * BOUNCE;
+                        const overlap = (ball.radius + hoop.rimRadius) - d;
+                        ball.x += nx * overlap;
+                        ball.y += ny * overlap;
+                    }
+                };
+                checkRim(hoop.x, hoop.y);
+                checkRim(hoop.x + hoop.width, hoop.y);
+
+                // Scoring
+                if (!hoop.hasScored && ball.vy > 0) {
+                    if (ball.x > hoop.x && ball.x < hoop.x + hoop.width && Math.abs(ball.y - hoop.y) < ball.radius) {
+                        score++;
+                        scoreEl.innerText = score;
+                        hoop.hasScored = true;
+                        spawnConfetti(ball.x, ball.y);
+                    }
+                }
+
+                obstacles.forEach(obs => {
+                    const cx = Math.max(obs.x, Math.min(ball.x, obs.x + obs.w));
+                    const cy = Math.max(obs.y, Math.min(ball.y, obs.y + obs.h));
+                    const dx = ball.x - cx;
+                    const dy = ball.y - cy;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < ball.radius) {
+                        const nx = dx / d;
+                        const ny = dy / d;
+                        const dot = ball.vx * nx + ball.vy * ny;
+                        ball.vx = (ball.vx - 2 * dot * nx) * BOUNCE;
+                        ball.vy = (ball.vy - 2 * dot * ny) * BOUNCE;
+                        ball.x += nx * (ball.radius - d);
+                        ball.y += ny * (ball.radius - d);
+                    }
+                });
+
+                if (ball.isIdle) hoop.hasScored = false;
+            } else hoop.hasScored = false;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#222';
+            ctx.fillRect(0, height - 20, width, 20);
+
+            // Backboard
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.fillRect(hoop.x + hoop.width + 10, hoop.y - 80, hoop.backboardWidth, hoop.backboardHeight);
+
+            // Rim connector
+            ctx.beginPath();
+            ctx.moveTo(hoop.x + hoop.width, hoop.y);
+            ctx.lineTo(hoop.x + hoop.width + 10, hoop.y);
+            ctx.strokeStyle = '#e67eff';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+            // Net (visual)
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.fillRect(hoop.x, hoop.y, hoop.width, hoop.netHeight);
+
+            obstacles.forEach(obs => obs.draw());
+
+            if (isDragging) {
+                ctx.beginPath();
+                ctx.moveTo(ball.x, ball.y);
+                ctx.lineTo(dragCurrentX, dragCurrentY);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            ctx.save();
+            ctx.translate(ball.x, ball.y);
+            ctx.rotate(ball.rotation);
+            ctx.beginPath();
+            ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, -ball.radius);
+            ctx.lineTo(0, ball.radius);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-ball.radius, 0);
+            ctx.lineTo(ball.radius, 0);
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.fillStyle = '#ff0055';
+            ctx.beginPath();
+            ctx.arc(hoop.x, hoop.y, hoop.rimRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(hoop.x + hoop.width, hoop.y, hoop.rimRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            particles.forEach(p => p.draw());
+        }
+
+        function loop() { update(); draw(); requestAnimationFrame(loop); }
+
+        init();
+    </script>
+</body>
+
+</html>

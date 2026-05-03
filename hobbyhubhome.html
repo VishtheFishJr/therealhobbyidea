@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hobby Hub</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #0b1b3a, #0a0f1f);
+            color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 40%),
+                radial-gradient(circle at bottom right, rgba(192, 192, 192, 0.08), transparent 40%);
+            animation: shine 8s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            from {
+                transform: translate(-10%, -10%);
+            }
+
+            to {
+                transform: translate(10%, 10%);
+            }
+        }
+
+        .container {
+            text-align: center;
+            max-width: 700px;
+            padding: 40px;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #c0c0c0, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 34px;
+            background: linear-gradient(135deg, #c0c0c0, #ffffff);
+            color: #0b1b3a;
+            font-weight: 700;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.3s ease;
+            box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+            margin: 10px 0;
+        }
+
+        /* Bigger login button */
+        .btn-login {
+            padding: 18px 44px;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+        }
+
+        .divider {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 12px;
+        }
+
+        /* Bigger Active Clubs text */
+        .divider span {
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .tag {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Hobby Hub</h1>
+        <p>
+            A premium space to learn, practice, and master hobbies.
+            Join challenges, improve your skills, and compete with creators worldwide.
+        </p>
+
+        <a class="btn btn-login" href="#">Log In / Create Account</a>
+
+        <div class="divider"><span>Active Clubs</span></div>
+
+        <a class="btn" href="hobbyhub.html">Enter Cardistry Club</a>
+
+        <div class="tag">A Skill-Based Community with People Like You</div>
+    </div>
+
+</body>
+
+</html>
