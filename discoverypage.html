@@ -7,7 +7,7 @@
 
     <title>HobbyHub</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -18,73 +18,116 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #0b1220, #05070f);
-            color: #e5e7eb;
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 35%),
+                linear-gradient(to bottom, #090909, #050505 40%, #000000);
+            color: #f5f5f5;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* TOP BAR */
+        /* SILVER GLOW BACKGROUND */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.04), transparent 25%),
+                radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.03), transparent 35%);
+            pointer-events: none;
+        }
+
+        /* TOPBAR */
         .topbar {
             position: fixed;
             top: 0;
             width: 100%;
+            padding: 16px 34px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 28px;
-            background: rgba(10, 12, 20, 0.7);
-            backdrop-filter: blur(12px);
+
+            background: rgba(15, 15, 15, 0.55);
+            backdrop-filter: blur(16px);
+
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
             z-index: 1000;
         }
 
         .brand {
-            font-weight: 700;
+            font-size: 1.3rem;
+            font-weight: 800;
             letter-spacing: 1px;
+
+            background: linear-gradient(to right, #ffffff, #8e8e8e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            text-shadow: 0 0 18px rgba(255, 255, 255, 0.15);
         }
 
         .auth {
             display: flex;
-            gap: 12px;
+            gap: 14px;
         }
 
         .auth a {
-            color: #e5e7eb;
             text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: 0.25s ease;
+            color: #e5e5e5;
+
+            padding: 10px 16px;
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            backdrop-filter: blur(10px);
+
+            transition: 0.3s ease;
         }
 
         .auth a:hover {
-            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+
+            box-shadow:
+                0 0 14px rgba(255, 255, 255, 0.12),
+                inset 0 0 12px rgba(255, 255, 255, 0.03);
+
+            transform: translateY(-2px);
         }
 
-        /* CONTENT */
+        /* MAIN */
         .container {
-            padding: 120px 40px 60px;
-            max-width: 1400px;
+            max-width: 1450px;
             margin: auto;
+            padding: 140px 40px 70px;
             text-align: center;
         }
 
         h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+            font-size: 3.5rem;
+            font-weight: 800;
+
+            background: linear-gradient(to right, #ffffff, #8f8f8f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            margin-bottom: 12px;
         }
 
-        p {
-            color: #a1a1aa;
-            margin-bottom: 40px;
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1rem;
+            margin-bottom: 55px;
         }
 
         /* GRID */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 22px;
+            gap: 24px;
         }
 
         @media (max-width: 1100px) {
@@ -93,7 +136,7 @@
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .grid {
                 grid-template-columns: 1fr;
             }
@@ -101,51 +144,136 @@
 
         /* CARD */
         .card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-            padding: 22px;
+            position: relative;
+
+            background:
+                linear-gradient(to bottom,
+                    rgba(255, 255, 255, 0.08),
+                    rgba(255, 255, 255, 0.03));
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 24px;
+
+            padding: 26px;
+
             text-align: left;
-            transition: 0.3s ease;
+
+            overflow: hidden;
+
+            backdrop-filter: blur(18px);
+
+            transition: 0.35s ease;
+        }
+
+        /* GLOSSY EFFECT */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 140%;
+            height: 80%;
+
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0.18),
+                    transparent);
+
+            transform: rotate(8deg);
         }
 
         .card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(79, 209, 255, 0.35);
-            box-shadow: 0 0 25px rgba(79, 209, 255, 0.12);
+            transform: translateY(-8px) scale(1.01);
+
+            border-color: rgba(255, 255, 255, 0.25);
+
+            box-shadow:
+                0 0 30px rgba(255, 255, 255, 0.08),
+                0 0 80px rgba(255, 255, 255, 0.04);
         }
 
         .card h3 {
-            margin-bottom: 6px;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
         }
 
         .card p {
-            font-size: 0.9rem;
-            margin-bottom: 14px;
+            color: #b5b5b5;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
 
-        /* ENTER BUTTON */
+        /* CLUB BUTTONS */
         .enter {
             display: inline-block;
-            padding: 10px 14px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            color: #e5e7eb;
+
+            padding: 11px 16px;
+            border-radius: 12px;
+
             text-decoration: none;
+            color: white;
+            font-weight: 600;
+
+            background: rgba(255, 255, 255, 0.05);
+
             border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: 0.25s ease;
+
+            backdrop-filter: blur(12px);
+
+            transition: 0.3s ease;
         }
 
         .enter:hover {
-            box-shadow: 0 0 18px rgba(79, 209, 255, 0.5);
-            border-color: rgba(79, 209, 255, 0.4);
             transform: translateY(-2px);
         }
 
+        /* GLOW COLORS */
+
+        .blue .enter:hover {
+            box-shadow: 0 0 18px #38bdf8;
+            border-color: #38bdf8;
+        }
+
+        .green .enter:hover {
+            box-shadow: 0 0 18px #22c55e;
+            border-color: #22c55e;
+        }
+
+        .yellow .enter:hover {
+            box-shadow: 0 0 18px #facc15;
+            border-color: #facc15;
+        }
+
+        .purple .enter:hover {
+            box-shadow: 0 0 18px #c084fc;
+            border-color: #c084fc;
+        }
+
+        .red .enter:hover {
+            box-shadow: 0 0 18px #ef4444;
+            border-color: #ef4444;
+        }
+
+        .pink .enter:hover {
+            box-shadow: 0 0 18px #ec4899;
+            border-color: #ec4899;
+        }
+
+        .cyan .enter:hover {
+            box-shadow: 0 0 18px #06b6d4;
+            border-color: #06b6d4;
+        }
+
+        .orange .enter:hover {
+            box-shadow: 0 0 18px #fb923c;
+            border-color: #fb923c;
+        }
+
         .tag {
-            margin-top: 40px;
+            margin-top: 55px;
             color: #71717a;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
     </style>
 </head>
@@ -153,7 +281,8 @@
 <body>
 
     <div class="topbar">
-        <div class="brand">Hobby1Hub</div>
+        <div class="brand">HobbyHub</div>
+
         <div class="auth">
             <a href="login.html">Log In</a>
             <a href="signup.html">Sign Up</a>
@@ -161,54 +290,58 @@
     </div>
 
     <div class="container">
+
         <h1>Active Hobby Clubs</h1>
-        <p>Join communities built around real skills, creativity, and competition.</p>
+
+        <div class="subtitle">
+            Join communities built around real skills, creativity, and competition.
+        </div>
 
         <div class="grid">
 
-            <div class="card">
+            <div class="card blue">
                 <h3>Cardistry</h3>
                 <p>Master flourishes, cuts, and visual card magic.</p>
                 <a class="enter" href="cardistry.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card green">
                 <h3>Speedcubing</h3>
                 <p>Solve cubes faster with algorithms and practice.</p>
                 <a class="enter" href="cubing.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card yellow">
                 <h3>LEGO Engineering</h3>
                 <p>Build complex mechanical creations and designs.</p>
                 <a class="enter" href="lego.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card purple">
                 <h3>Mechanical Keyboards</h3>
                 <p>Customize, build, and design keyboard setups.</p>
                 <a class="enter" href="keyboards.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card red">
                 <h3>Guitar</h3>
                 <p>Learn riffs, solos, and music theory.</p>
                 <a class="enter" href="guitar.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card pink">
                 <h3>Yo-Yo Tricks</h3>
                 <p>Advanced string tricks and freestyle combos.</p>
                 <a class="enter" href="yoyo.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card cyan">
                 <h3>Photography</h3>
                 <p>Capture, edit, and share visual storytelling.</p>
                 <a class="enter" href="photo.html">Enter Club</a>
             </div>
 
-            <div class="card">
+            <div class="card orange">
                 <h3>Coding</h3>
                 <p>Build projects, games, and real-world apps.</p>
                 <a class="enter" href="coding.html">Enter Club</a>
@@ -216,7 +349,9 @@
 
         </div>
 
-        <div class="tag">More clubs unlock as the community grows.</div>
+        <div class="tag">
+            More clubs unlock as the community grows.
+        </div>
 
     </div>
 
