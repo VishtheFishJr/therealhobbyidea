@@ -21,7 +21,7 @@ $result = $conn->query($sql);
 
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -33,21 +33,24 @@ $result = $conn->query($sql);
 
         body {
             min-height: 100vh;
-            color: white;
             overflow-x: hidden;
+            color: #fff;
 
-            background: radial-gradient(circle at top, #1a1a1a, #000);
+            background: linear-gradient(135deg, #0f172a, #1e1b4b, #0ea5e9);
         }
 
-        /* soft glow background */
+        /* MORE COLORFUL BACKGROUND GLOWS */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
+
             background:
-                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.15), transparent 40%),
-                radial-gradient(circle at 80% 10%, rgba(192, 132, 252, 0.12), transparent 40%),
-                radial-gradient(circle at 50% 90%, rgba(34, 197, 94, 0.10), transparent 50%);
+                radial-gradient(circle at 10% 10%, rgba(255, 0, 128, 0.35), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.25), transparent 40%),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 0, 0.20), transparent 45%),
+                radial-gradient(circle at 90% 90%, rgba(0, 255, 100, 0.20), transparent 45%);
+
             pointer-events: none;
         }
 
@@ -60,16 +63,17 @@ $result = $conn->query($sql);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            z-index: 1000;
+
+            background: rgba(10, 10, 20, 0.6);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .brand {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 900;
-            background: linear-gradient(to right, #fff, #aaa);
+
+            background: linear-gradient(to right, #ff00cc, #00ffff, #ffff00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -77,17 +81,18 @@ $result = $conn->query($sql);
         .auth a {
             text-decoration: none;
             color: white;
-            padding: 10px 14px;
             margin-left: 10px;
+            padding: 10px 14px;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: 0.3s;
+
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: 0.25s;
         }
 
         .auth a:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         /* MAIN */
@@ -99,18 +104,19 @@ $result = $conn->query($sql);
         }
 
         h1 {
-            font-size: 3.2rem;
+            font-size: 3.4rem;
             font-weight: 900;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #fff, #999);
+
+            background: linear-gradient(to right, #ff4d6d, #4cc9f0, #facc15);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
             margin-bottom: 50px;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
         }
 
         /* GRID */
@@ -132,106 +138,98 @@ $result = $conn->query($sql);
             }
         }
 
-        /* CARD BASE */
+        /* CARD */
         .card {
             position: relative;
             padding: 24px;
-            border-radius: 22px;
-            text-align: left;
+            border-radius: 24px;
 
-            border: 1px solid rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(14px);
 
-            transition: 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            transition: 0.25s ease;
+
             overflow: hidden;
         }
 
         .card:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.35);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: translateY(-12px) scale(1.03);
+            filter: brightness(1.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
         }
 
-        /* COLOR CARDS */
+        /* BRIGHTER CLASSES */
         .blue {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
         }
 
         .green {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #00f260, #0575e6);
         }
 
         .yellow {
-            background: linear-gradient(135deg, rgba(250, 204, 21, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #fceabb, #f8b500);
         }
 
         .purple {
-            background: linear-gradient(135deg, rgba(192, 132, 252, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
         }
 
         .red {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
         }
 
         .pink {
-            background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #ff0099, #493240);
         }
 
         .cyan {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #00dbde, #fc00ff);
         }
 
         .orange {
-            background: linear-gradient(135deg, rgba(251, 146, 60, 0.18), rgba(255, 255, 255, 0.03));
+            background: linear-gradient(135deg, #f7971e, #ffd200);
         }
 
         /* TEXT */
         .card h3 {
-            font-size: 1.3rem;
-            font-weight: 800;
+            font-size: 1.4rem;
+            font-weight: 900;
             margin-bottom: 6px;
         }
 
         .card p {
-            color: rgba(255, 255, 255, 0.75);
             font-size: 0.95rem;
+            opacity: 0.9;
             margin-bottom: 18px;
-            line-height: 1.5;
         }
 
         /* BUTTON */
         .enter {
             display: inline-block;
-            padding: 10px 14px;
+            padding: 11px 16px;
             border-radius: 14px;
+
+            font-weight: 800;
             text-decoration: none;
-            color: white;
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: 0.3s;
+            color: #fff;
+
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+
+            transition: 0.2s;
         }
 
         .enter:hover {
-            transform: translateY(-2px);
-            border-color: white;
+            background: rgba(0, 0, 0, 0.4);
+            transform: scale(1.05);
         }
 
-        /* glow dot */
-        .card::after {
-            content: "";
-            position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 70%);
-            opacity: 0.6;
-        }
-
+        /* TAG */
         .tag {
-            margin-top: 50px;
-            color: rgba(255, 255, 255, 0.5);
+            margin-top: 55px;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -252,7 +250,7 @@ $result = $conn->query($sql);
         <h1>Active Hobby Clubs</h1>
 
         <div class="subtitle">
-            Join communities built around creativity, skill, and competition.
+            Join vibrant communities built around creativity, skill, and competition 🚀
         </div>
 
         <div class="grid">
@@ -276,7 +274,7 @@ $result = $conn->query($sql);
         </div>
 
         <div class="tag">
-            More clubs unlock as the community grows.
+            New clubs are added constantly — join the movement 🌟
         </div>
 
     </div>
