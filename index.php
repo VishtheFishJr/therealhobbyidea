@@ -1,4 +1,16 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+include "db.php";
+
+$sql = "SELECT * FROM clubs";
+$result = $conn->query($sql);
+
+?>
+
+<?php
 include "db.php";
 
 $sql = "SELECT * FROM clubs";
@@ -287,11 +299,11 @@ $result = $conn->query($sql);
                 <div class="card <?php echo $club['color_class']; ?>">
 
                     <h3>
-                            <?php echo $club['name']; ?>
+                        <?php echo $club['name']; ?>
                     </h3>
 
                     <p>
-                            <?php echo $club['description']; ?>
+                        <?php echo $club['description']; ?>
                     </p>
 
                     <a class="enter" href="<?php echo $club['page_link']; ?>">
