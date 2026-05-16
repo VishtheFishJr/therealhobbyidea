@@ -10,13 +10,6 @@ $result = $conn->query($sql);
 
 ?>
 
-<?php
-include "db.php";
-
-$sql = "SELECT * FROM clubs";
-$result = $conn->query($sql);
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,109 +32,92 @@ $result = $conn->query($sql);
         }
 
         body {
-            background:
-                radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 35%),
-                linear-gradient(to bottom, #090909, #050505 40%, #000000);
-
-            color: #f5f5f5;
             min-height: 100vh;
+            color: white;
             overflow-x: hidden;
+
+            background: radial-gradient(circle at top, #1a1a1a, #000);
         }
 
+        /* soft glow background */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
-
             background:
-                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.05), transparent 25%),
-                radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.04), transparent 25%),
-                radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.03), transparent 35%);
-
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 10%, rgba(192, 132, 252, 0.12), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(34, 197, 94, 0.10), transparent 50%);
             pointer-events: none;
         }
 
+        /* TOPBAR */
         .topbar {
             position: fixed;
             top: 0;
             width: 100%;
             padding: 16px 34px;
-
             display: flex;
             justify-content: space-between;
             align-items: center;
-
-            background: rgba(15, 15, 15, 0.55);
-
+            background: rgba(10, 10, 10, 0.6);
             backdrop-filter: blur(16px);
-
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
             z-index: 1000;
         }
 
         .brand {
             font-size: 1.3rem;
-            font-weight: 800;
-
-            letter-spacing: 1px;
-
-            background: linear-gradient(to right, #ffffff, #8e8e8e);
-
+            font-weight: 900;
+            background: linear-gradient(to right, #fff, #aaa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .auth {
-            display: flex;
-            gap: 14px;
-        }
-
         .auth a {
             text-decoration: none;
-            color: #e5e5e5;
-
-            padding: 10px 16px;
+            color: white;
+            padding: 10px 14px;
+            margin-left: 10px;
             border-radius: 12px;
-
-            background: rgba(255, 255, 255, 0.04);
-
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            transition: 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: 0.3s;
         }
 
+        .auth a:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* MAIN */
         .container {
-            max-width: 1450px;
+            max-width: 1300px;
             margin: auto;
-
-            padding: 140px 40px 70px;
-
+            padding: 140px 20px 70px;
             text-align: center;
         }
 
         h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-
-            margin-bottom: 12px;
-
-            background: linear-gradient(to right, #ffffff, #8f8f8f);
-
+            font-size: 3.2rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, #999);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
-            color: #9ca3af;
-            font-size: 1rem;
-            margin-bottom: 55px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 50px;
+            font-size: 1.05rem;
         }
 
+        /* GRID */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
+            gap: 22px;
         }
 
         @media (max-width: 1100px) {
@@ -156,117 +132,106 @@ $result = $conn->query($sql);
             }
         }
 
+        /* CARD BASE */
         .card {
             position: relative;
-
-            background:
-                linear-gradient(to bottom,
-                    rgba(255, 255, 255, 0.08),
-                    rgba(255, 255, 255, 0.03));
-
-            border: 1px solid rgba(255, 255, 255, 0.1);
-
-            border-radius: 24px;
-
-            padding: 26px;
-
+            padding: 24px;
+            border-radius: 22px;
             text-align: left;
 
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(14px);
+
+            transition: 0.3s ease;
             overflow: hidden;
-
-            backdrop-filter: blur(18px);
-
-            transition: 0.35s ease;
         }
 
         .card:hover {
-            transform: translateY(-8px) scale(1.01);
-
-            border-color: rgba(255, 255, 255, 0.25);
-
-            box-shadow:
-                0 0 30px rgba(255, 255, 255, 0.08),
-                0 0 80px rgba(255, 255, 255, 0.04);
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
+        /* COLOR CARDS */
+        .blue {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .green {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .yellow {
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .purple {
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .pink {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .cyan {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        .orange {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.18), rgba(255, 255, 255, 0.03));
+        }
+
+        /* TEXT */
         .card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 8px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 6px;
         }
 
         .card p {
-            color: #b5b5b5;
+            color: rgba(255, 255, 255, 0.75);
             font-size: 0.95rem;
-
+            margin-bottom: 18px;
             line-height: 1.5;
-
-            margin-bottom: 20px;
         }
 
+        /* BUTTON */
         .enter {
             display: inline-block;
-
-            padding: 11px 16px;
-
-            border-radius: 12px;
-
+            padding: 10px 14px;
+            border-radius: 14px;
             text-decoration: none;
-
             color: white;
-
-            font-weight: 600;
-
-            background: rgba(255, 255, 255, 0.05);
-
-            border: 1px solid rgba(255, 255, 255, 0.12);
-
-            transition: 0.3s ease;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: 0.3s;
         }
 
-        .blue .enter:hover {
-            box-shadow: 0 0 18px #38bdf8;
-            border-color: #38bdf8;
+        .enter:hover {
+            transform: translateY(-2px);
+            border-color: white;
         }
 
-        .green .enter:hover {
-            box-shadow: 0 0 18px #22c55e;
-            border-color: #22c55e;
-        }
-
-        .yellow .enter:hover {
-            box-shadow: 0 0 18px #facc15;
-            border-color: #facc15;
-        }
-
-        .purple .enter:hover {
-            box-shadow: 0 0 18px #c084fc;
-            border-color: #c084fc;
-        }
-
-        .red .enter:hover {
-            box-shadow: 0 0 18px #ef4444;
-            border-color: #ef4444;
-        }
-
-        .pink .enter:hover {
-            box-shadow: 0 0 18px #ec4899;
-            border-color: #ec4899;
-        }
-
-        .cyan .enter:hover {
-            box-shadow: 0 0 18px #06b6d4;
-            border-color: #06b6d4;
-        }
-
-        .orange .enter:hover {
-            box-shadow: 0 0 18px #fb923c;
-            border-color: #fb923c;
+        /* glow dot */
+        .card::after {
+            content: "";
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 70%);
+            opacity: 0.6;
         }
 
         .tag {
-            margin-top: 55px;
-            color: #71717a;
-            font-size: 0.95rem;
+            margin-top: 50px;
+            color: rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -274,14 +239,12 @@ $result = $conn->query($sql);
 <body>
 
     <div class="topbar">
-
         <div class="brand">HobbyHub</div>
 
         <div class="auth">
             <a href="login.html">Log In</a>
             <a href="signup.html">Sign Up</a>
         </div>
-
     </div>
 
     <div class="container">
@@ -289,7 +252,7 @@ $result = $conn->query($sql);
         <h1>Active Hobby Clubs</h1>
 
         <div class="subtitle">
-            Join communities built around real skills, creativity, and competition.
+            Join communities built around creativity, skill, and competition.
         </div>
 
         <div class="grid">
@@ -298,18 +261,12 @@ $result = $conn->query($sql);
 
                 <div class="card <?php echo $club['color_class']; ?>">
 
-                    <h3>
-                        <?php echo $club['name']; ?>
-                    </h3>
+                    <h3><?php echo $club['name']; ?></h3>
 
-                    <p>
-                        <?php echo $club['description']; ?>
-                    </p>
+                    <p><?php echo $club['description']; ?></p>
 
                     <a class="enter" href="<?php echo $club['page_link']; ?>">
-
                         Enter Club
-
                     </a>
 
                 </div>
