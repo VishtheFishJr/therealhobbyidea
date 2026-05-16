@@ -282,25 +282,25 @@ $result = $conn->query($sql);
 
         <div class="grid">
 
-            <?php while($club = $result->fetch_assoc()) { ?>
+            <?php while ($club = $result->fetch_assoc()) { ?>
 
-            <div class="card <?php echo $club['color_class']; ?>">
+                <div class="card <?php echo $club['color_class']; ?>">
 
-                <h3>
-                    <?php echo $club['name']; ?>
-                </h3>
+                    <h3>
+                            <?php echo $club['name']; ?>
+                    </h3>
 
-                <p>
-                    <?php echo $club['description']; ?>
-                </p>
+                    <p>
+                            <?php echo $club['description']; ?>
+                    </p>
 
-                <a class="enter" href="<?php echo $club['page_link']; ?>">
+                    <a class="enter" href="<?php echo $club['page_link']; ?>">
 
-                    Enter Club
+                        Enter Club
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
             <?php } ?>
 
