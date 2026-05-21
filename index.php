@@ -8,7 +8,7 @@ include "db.php";
 
 /* Force login */
 if (!isset($_SESSION["user"])) {
-    header("Location: index.php");
+    header("Location: discoverypage.php");
     exit;
 }
 
