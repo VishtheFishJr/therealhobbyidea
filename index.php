@@ -8,7 +8,15 @@ include "db.php";
 $sql = "SELECT * FROM clubs";
 $result = $conn->query($sql);
 
+session_start();
+
+if (!isset($_SESSION["user"])) {
+    header("Location: login.php");
+    exit;
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
