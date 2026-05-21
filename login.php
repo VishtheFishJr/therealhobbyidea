@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["user"] = $user["username"];
         $_SESSION["role"] = $user["role"];
 
-        header("Location: loggedin.php");
+        header("Location: index.php");
         exit;
 
     } else {
