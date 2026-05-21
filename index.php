@@ -277,7 +277,7 @@ $result = $conn->query($sql);
 
         <h1>
             Welcome to HobbyHub,
-                        <?php echo htmlspecialchars($_SESSION["user"]); ?>
+            <?php echo htmlspecialchars($_SESSION["user"]); ?>
         </h1>
 
         <div class="subtitle">
@@ -286,11 +286,11 @@ $result = $conn->query($sql);
 
         <div class="grid">
 
-                        <?php while ($club = $result->fetch_assoc()) { ?>
+            <?php while ($club = $result->fetch_assoc()) { ?>
 
                 <?php
-                $image = !empty($club["images"])
-                    ? $club["images"]
+                $image = !empty($club["image"])
+                    ? $club["image"]
                     : "images/default.jpg";
                 ?>
 
@@ -302,11 +302,11 @@ $result = $conn->query($sql);
                     <div class="content">
 
                         <h3>
-                                                        <?php echo htmlspecialchars($club["name"] ?? "Unnamed Club"); ?>
+                            <?php echo htmlspecialchars($club["name"] ?? "Unnamed Club"); ?>
                         </h3>
 
                         <p>
-                                                        <?php echo htmlspecialchars($club["description"] ?? ""); ?>
+                            <?php echo htmlspecialchars($club["description"] ?? ""); ?>
                         </p>
 
                         <a class="enter" href="<?php echo htmlspecialchars($club["page_link"] ?? "#"); ?>">
@@ -317,7 +317,7 @@ $result = $conn->query($sql);
 
                 </div>
 
-                        <?php } ?>
+            <?php } ?>
 
         </div>
 
