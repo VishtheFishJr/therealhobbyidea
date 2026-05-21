@@ -43,17 +43,6 @@ if (!isset($_SESSION["user"])) {
             font-size: 1.4rem;
         }
 
-        .right {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .user {
-            color: #9ca3af;
-            font-size: 0.95rem;
-        }
-
         .logout {
             text-decoration: none;
             background: #1d2635;
@@ -94,21 +83,19 @@ if (!isset($_SESSION["user"])) {
     <div class="topbar">
         <div class="brand">HobbyHub</div>
 
-        <div class="right">
-            <div class="user">
-                Welcome, <?php echo htmlspecialchars($_SESSION["user"]); ?>
-            </div>
-
-            <a class="logout" href="logout.php">Logout</a>
-        </div>
+        <a class="logout" href="logout.php">Logout</a>
     </div>
 
     <div class="container">
-        <h1>Welcome to HobbyHub</h1>
+
+        <h1>
+            Welcome to HobbyHub, <?php echo htmlspecialchars($_SESSION["user"]); ?>
+        </h1>
 
         <div class="card">
             You are successfully logged in.
         </div>
+
     </div>
 
 </body>
