@@ -289,8 +289,8 @@ $result = $conn->query($sql);
             <?php while ($club = $result->fetch_assoc()) { ?>
 
                 <?php
-                $image = !empty($club["image"])
-                    ? $club["image"]
+                $image = !empty($club["images"])
+                    ? $club["images"]
                     : "images/default.jpg";
                 ?>
 
