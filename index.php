@@ -36,13 +36,18 @@ $result = $conn->query($sql);
             background: #10131a;
             color: white;
             min-height: 100vh;
+            overflow-x: hidden;
         }
+
+        /* TOP BAR */
 
         .topbar {
 
             position: fixed;
 
             top: 0;
+
+            left: 0;
 
             width: 100%;
 
@@ -58,9 +63,14 @@ $result = $conn->query($sql);
 
             backdrop-filter: blur(12px);
 
-            z-index: 100;
+            border-bottom:
+                1px solid rgba(255, 255, 255, .08);
+
+            z-index: 1000;
 
         }
+
+        /* LOGO */
 
         .brand {
 
@@ -68,9 +78,20 @@ $result = $conn->query($sql);
 
             font-weight: 900;
 
-            color: #8dc7ff;
+            letter-spacing: .5px;
+
+            background:
+                linear-gradient(90deg,
+                    #ffffff,
+                    #8fcfff);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
 
         }
+
+        /* AUTH */
 
         .auth {
 
@@ -86,13 +107,26 @@ $result = $conn->query($sql);
 
             color: white;
 
-            padding: 10px 15px;
+            padding: 10px 16px;
 
             border-radius: 12px;
 
-            background: #1f2937;
+            background: #1d2635;
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+
+            transition: .2s;
 
         }
+
+        .auth a:hover {
+
+            background: #2a3850;
+
+        }
+
+        /* PAGE */
 
         .container {
 
@@ -100,25 +134,33 @@ $result = $conn->query($sql);
 
             margin: auto;
 
-            padding: 140px 30px 70px;
+            padding: 140px 30px 80px;
+
+            text-align: center;
 
         }
 
         h1 {
 
-            font-size: 3rem;
+            font-size: 3.2rem;
 
-            margin-bottom: 10px;
+            font-weight: 900;
+
+            margin-bottom: 12px;
 
         }
 
         .subtitle {
 
+            font-size: 1.05rem;
+
             color: #9ca3af;
 
-            margin-bottom: 55px;
+            margin-bottom: 60px;
 
         }
+
+        /* GRID */
 
         .grid {
 
@@ -129,13 +171,17 @@ $result = $conn->query($sql);
 
             gap: 24px;
 
+            text-align: left;
+
         }
 
         @media(max-width:1100px) {
 
             .grid {
+
                 grid-template-columns:
                     repeat(2, 1fr);
+
             }
 
         }
@@ -143,7 +189,10 @@ $result = $conn->query($sql);
         @media(max-width:650px) {
 
             .grid {
-                grid-template-columns: 1fr;
+
+                grid-template-columns:
+                    1fr;
+
             }
 
         }
@@ -154,7 +203,7 @@ $result = $conn->query($sql);
 
             background: #1a2233;
 
-            border-radius: 22px;
+            border-radius: 24px;
 
             overflow: hidden;
 
@@ -164,12 +213,18 @@ $result = $conn->query($sql);
 
             transition: .25s;
 
+            border:
+                1px solid rgba(255, 255, 255, .06);
+
         }
 
         .card:hover {
 
             transform:
                 translateY(-6px);
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, .35);
 
         }
 
@@ -181,15 +236,13 @@ $result = $conn->query($sql);
 
             height: 250px;
 
-            /* SHOW FULL IMAGE */
-
             object-fit: contain;
 
-            background: #141b28;
-
-            display: block;
+            background: #131b2a;
 
             padding: 12px;
+
+            display: block;
 
         }
 
@@ -203,17 +256,19 @@ $result = $conn->query($sql);
 
         .content h3 {
 
-            font-size: 1.5rem;
+            font-size: 1.45rem;
+
+            font-weight: 900;
 
             margin-bottom: 10px;
 
-            font-weight: 900;
+            color: white;
 
         }
 
         .content p {
 
-            color: #d5d5d5;
+            color: #cfd5df;
 
             line-height: 1.6;
 
@@ -237,23 +292,29 @@ $result = $conn->query($sql);
 
             color: white;
 
-            background: #338bff;
+            background:
+                linear-gradient(90deg,
+                    #338bff,
+                    #4eb0ff);
+
+            transition: .2s;
 
         }
 
         .enter:hover {
 
-            background: #4da0ff;
+            transform:
+                translateY(-2px);
 
         }
 
+        /* FOOT */
+
         .tag {
 
-            margin-top: 55px;
+            margin-top: 60px;
 
-            color: #7f8794;
-
-            text-align: center;
+            color: #7d8697;
 
         }
     </style>
@@ -265,17 +326,23 @@ $result = $conn->query($sql);
     <div class="topbar">
 
         <div class="brand">
+
             HobbyHub
+
         </div>
 
         <div class="auth">
 
             <a href="login.html">
+
                 Log In
+
             </a>
 
             <a href="signup.html">
+
                 Sign Up
+
             </a>
 
         </div>
@@ -285,12 +352,14 @@ $result = $conn->query($sql);
     <div class="container">
 
         <h1>
+
             Active Hobby Clubs
+
         </h1>
 
         <div class="subtitle">
 
-            Join communities built around creativity and skill.
+            Join communities built around creativity, skill, and competition.
 
         </div>
 
@@ -343,7 +412,7 @@ $result = $conn->query($sql);
 
                 <div class="card">
 
-                    <img class="club-image" src="<?php echo $image; ?>">
+                    <img class="club-image" src="<?php echo $image; ?>" alt="<?php echo $club['name']; ?>">
 
                     <div class="content">
 
