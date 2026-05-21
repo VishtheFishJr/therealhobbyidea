@@ -46,7 +46,6 @@ $result = $conn->query($sql);
             overflow-x: hidden;
         }
 
-        /* TOP BAR */
         .topbar {
             position: fixed;
             top: 0;
@@ -62,7 +61,6 @@ $result = $conn->query($sql);
             z-index: 1000;
         }
 
-        /* LOGO */
         .brand {
             font-size: 1.5rem;
             font-weight: 900;
@@ -72,7 +70,6 @@ $result = $conn->query($sql);
             -webkit-text-fill-color: transparent;
         }
 
-        /* LOGOUT */
         .auth a {
             text-decoration: none;
             color: white;
@@ -87,7 +84,6 @@ $result = $conn->query($sql);
             background: #2a3850;
         }
 
-        /* PAGE */
         .container {
             max-width: 1400px;
             margin: auto;
@@ -107,7 +103,6 @@ $result = $conn->query($sql);
             margin-bottom: 60px;
         }
 
-        /* GRID */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -127,7 +122,6 @@ $result = $conn->query($sql);
             }
         }
 
-        /* CARD */
         .card {
             background: #1a2233;
             border-radius: 24px;
@@ -203,7 +197,7 @@ $result = $conn->query($sql);
 
     <div class="container">
 
-        <!-- 👤 PERSONALIZED TITLE -->
+        <!-- 👤 Personalized title -->
         <h1>
             Welcome to HobbyHub, <?php echo htmlspecialchars($_SESSION["user"]); ?>
         </h1>
@@ -216,46 +210,17 @@ $result = $conn->query($sql);
 
             <?php while ($club = $result->fetch_assoc()) { ?>
 
-                <?php
-                switch ($club["color_class"]) {
-                    case "blue":
-                        $image = "images/Cardistry.jpg";
-                        break;
-                    case "green":
-                        $image = "images/Rubix.jpg";
-                        break;
-                    case "yellow":
-                        $image = "images/Lego.jpg";
-                        break;
-                    case "purple":
-                        $image = "images/Keyboard.jpg";
-                        break;
-                    case "red":
-                        $image = "images/Guitar.jpg";
-                        break;
-                    case "pink":
-                        $image = "images/Yoyo.jpg";
-                        break;
-                    case "cyan":
-                        $image = "images/Photography.jpg";
-                        break;
-                    case "orange":
-                        $image = "images/Code.jpg";
-                        break;
-                    default:
-                        $image = "images/Code.jpg";
-                }
-                ?>
-
                 <div class="card">
 
-                    <img class="club-image" src="<?php echo $image; ?>" alt="">
+                    <!-- ✅ IMAGE FROM DATABASE -->
+                    <img class="club-image" src="<?php echo htmlspecialchars($club["images"]); ?>"
+                        alt="<?php echo htmlspecialchars($club["name"]); ?>">
 
                     <div class="content">
 
-                        <h3><?php echo $club["name"]; ?></h3>
+                        <h3><?php echo htmlspecialchars($club["name"]); ?></h3>
 
-                        <p><?php echo $club["description"]; ?></p>
+                        <p><?php echo htmlspecialchars($club["description"]); ?></p>
 
                         <a class="enter" href="<?php echo $club["page_link"]; ?>">
                             Enter Club
