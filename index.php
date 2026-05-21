@@ -205,9 +205,9 @@ $result = $conn->query($sql);
 
             overflow: hidden;
 
-            background-size: cover;
-
+            background-size: contain;
             background-position: center;
+            background-repeat: no-repeat;
 
             border: 1px solid rgba(255, 255, 255, .08);
 
