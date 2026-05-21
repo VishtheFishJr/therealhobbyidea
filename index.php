@@ -333,13 +333,13 @@ $result = $conn->query($sql);
 
         <div class="auth">
 
-            <a href="login.html">
+            <a href="login.php">
 
                 Log In
 
             </a>
 
-            <a href="signup.html">
+            <a href="signup.php">
 
                 Sign Up
 
