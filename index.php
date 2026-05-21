@@ -12,7 +12,7 @@ if (!isset($_SESSION["user"])) {
     exit;
 }
 
-/* Load clubs AFTER auth check */
+/* Load clubs */
 $sql = "SELECT * FROM clubs";
 $result = $conn->query($sql);
 ?>
@@ -21,6 +21,7 @@ $result = $conn->query($sql);
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -45,6 +46,7 @@ $result = $conn->query($sql);
             overflow-x: hidden;
         }
 
+        /* TOP BAR */
         .topbar {
             position: fixed;
             top: 0;
@@ -60,6 +62,7 @@ $result = $conn->query($sql);
             z-index: 1000;
         }
 
+        /* LOGO */
         .brand {
             font-size: 1.5rem;
             font-weight: 900;
@@ -69,6 +72,7 @@ $result = $conn->query($sql);
             -webkit-text-fill-color: transparent;
         }
 
+        /* LOGOUT */
         .auth a {
             text-decoration: none;
             color: white;
@@ -83,6 +87,7 @@ $result = $conn->query($sql);
             background: #2a3850;
         }
 
+        /* PAGE */
         .container {
             max-width: 1400px;
             margin: auto;
@@ -102,6 +107,7 @@ $result = $conn->query($sql);
             margin-bottom: 60px;
         }
 
+        /* GRID */
         .grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -121,6 +127,7 @@ $result = $conn->query($sql);
             }
         }
 
+        /* CARD */
         .card {
             background: #1a2233;
             border-radius: 24px;
@@ -142,6 +149,7 @@ $result = $conn->query($sql);
             object-fit: contain;
             background: #131b2a;
             padding: 12px;
+            display: block;
         }
 
         .content {
@@ -180,6 +188,7 @@ $result = $conn->query($sql);
             color: #7d8697;
         }
     </style>
+
 </head>
 
 <body>
@@ -194,7 +203,7 @@ $result = $conn->query($sql);
 
     <div class="container">
 
-        <!-- 🔥 PERSONALIZED TITLE -->
+        <!-- 👤 PERSONALIZED TITLE -->
         <h1>
             Welcome to HobbyHub, <?php echo htmlspecialchars($_SESSION["user"]); ?>
         </h1>
@@ -239,12 +248,21 @@ $result = $conn->query($sql);
                 ?>
 
                 <div class="card">
+
                     <img class="club-image" src="<?php echo $image; ?>" alt="">
+
                     <div class="content">
+
                         <h3><?php echo $club["name"]; ?></h3>
+
                         <p><?php echo $club["description"]; ?></p>
-                        <a class="enter" href="<?php echo $club["page_link"]; ?>">Enter Club</a>
+
+                        <a class="enter" href="<?php echo $club["page_link"]; ?>">
+                            Enter Club
+                        </a>
+
                     </div>
+
                 </div>
 
             <?php } ?>
