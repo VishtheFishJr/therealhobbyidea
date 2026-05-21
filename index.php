@@ -47,6 +47,7 @@ $result = $conn->query($sql);
         }
 
         .topbar {
+
             position: fixed;
 
             top: 0;
@@ -70,6 +71,7 @@ $result = $conn->query($sql);
                 1px solid rgba(255, 255, 255, .08);
 
             z-index: 1000;
+
         }
 
         .brand {
@@ -86,6 +88,7 @@ $result = $conn->query($sql);
             -webkit-background-clip: text;
 
             -webkit-text-fill-color: transparent;
+
         }
 
         .auth a {
@@ -102,10 +105,15 @@ $result = $conn->query($sql);
 
             border:
                 1px solid rgba(255, 255, 255, .08);
+
+            transition: .2s;
+
         }
 
         .auth a:hover {
+
             background: #2a3850;
+
         }
 
         .container {
@@ -117,6 +125,7 @@ $result = $conn->query($sql);
             padding: 140px 30px 80px;
 
             text-align: center;
+
         }
 
         h1 {
@@ -126,6 +135,7 @@ $result = $conn->query($sql);
             font-weight: 900;
 
             margin-bottom: 12px;
+
         }
 
         .subtitle {
@@ -133,6 +143,7 @@ $result = $conn->query($sql);
             color: #9ca3af;
 
             margin-bottom: 60px;
+
         }
 
         .grid {
@@ -145,6 +156,7 @@ $result = $conn->query($sql);
             gap: 24px;
 
             text-align: left;
+
         }
 
         @media(max-width:1100px) {
@@ -211,7 +223,9 @@ $result = $conn->query($sql);
         }
 
         .content {
+
             padding: 22px;
+
         }
 
         .content h3 {
@@ -254,11 +268,14 @@ $result = $conn->query($sql);
                     #4eb0ff);
 
             transition: .2s;
+
         }
 
         .enter:hover {
+
             transform:
                 translateY(-2px);
+
         }
 
         .tag {
@@ -266,6 +283,38 @@ $result = $conn->query($sql);
             margin-top: 60px;
 
             color: #7d8697;
+
+        }
+
+        .add-club {
+
+            display: inline-block;
+
+            margin-top: 30px;
+
+            padding: 14px 26px;
+
+            border-radius: 14px;
+
+            text-decoration: none;
+
+            font-weight: 900;
+
+            color: white;
+
+            background:
+                linear-gradient(90deg,
+                    #338bff,
+                    #4eb0ff);
+
+            transition: .2s;
+
+        }
+
+        .add-club:hover {
+
+            transform:
+                translateY(-2px);
 
         }
     </style>
@@ -281,9 +330,11 @@ $result = $conn->query($sql);
         </div>
 
         <div class="auth">
+
             <a href="logout.php">
                 Logout
             </a>
+
         </div>
 
     </div>
@@ -291,12 +342,17 @@ $result = $conn->query($sql);
     <div class="container">
 
         <h1>
+
             Welcome to HobbyHub,
+
             <?php echo htmlspecialchars($_SESSION["user"]); ?>
+
         </h1>
 
         <div class="subtitle">
+
             Join communities built around creativity, skill, and competition.
+
         </div>
 
         <div class="grid">
@@ -320,15 +376,21 @@ $result = $conn->query($sql);
                     <div class="content">
 
                         <h3>
+
                             <?php echo htmlspecialchars($club["name"] ?? "Unnamed Club"); ?>
+
                         </h3>
 
                         <p>
+
                             <?php echo htmlspecialchars($club["description"] ?? ""); ?>
+
                         </p>
 
                         <a class="enter" href="<?php echo htmlspecialchars($club["page_link"] ?? "#"); ?>">
-                            Explore the Club
+
+                            Enter Club
+
                         </a>
 
                     </div>
@@ -340,8 +402,16 @@ $result = $conn->query($sql);
         </div>
 
         <div class="tag">
+
             New clubs are added constantly.
+
         </div>
+
+        <a class="add-club" href="addclub.php">
+
+            + Add a Club
+
+        </a>
 
     </div>
 
