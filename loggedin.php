@@ -32,10 +32,15 @@ if (!isset($_SESSION["user"])) {
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             padding: 16px 28px;
+            box-sizing: border-box;
+
             background: #10131add;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+            z-index: 1000;
         }
 
         .brand {
