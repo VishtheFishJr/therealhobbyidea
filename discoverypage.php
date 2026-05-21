@@ -21,192 +21,149 @@
         }
 
         body {
-
             min-height: 100vh;
-
             color: white;
-
-            background:
-                url("landing.jpg");
-
-            background-size: cover;
-
-            background-position: center;
-
-            background-repeat: no-repeat;
-
+            background: url("landing.jpg") center/cover no-repeat;
+            overflow-x: hidden;
         }
 
-        .topbar {
-
+        /* DARK OVERLAY */
+        .overlay-bg {
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 0;
+        }
 
+        /* TOP BAR */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             padding: 18px 34px;
 
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
 
             background: #10131add;
-
             backdrop-filter: blur(12px);
 
-            border-bottom:
-                1px solid rgba(255, 255, 255, .08);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
 
-            z-index: 1000;
-
+            z-index: 2;
         }
 
         .brand {
-
             font-size: 1.5rem;
-
             font-weight: 900;
 
-            background:
-                linear-gradient(90deg,
-                    #ffffff,
-                    #8fcfff);
+            background: linear-gradient(90deg, #fff, #8fcfff);
 
             -webkit-background-clip: text;
-
             -webkit-text-fill-color: transparent;
-
         }
 
         .auth {
-
             display: flex;
-
             gap: 12px;
-
         }
 
         .auth a {
-
             text-decoration: none;
-
             color: white;
 
             padding: 10px 18px;
-
             border-radius: 12px;
 
             background: #1d2635;
-
-            border:
-                1px solid rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .08);
 
             transition: .2s;
-
         }
 
         .auth a:hover {
-
             background: #2a3850;
-
         }
 
+        /* HERO */
         .hero {
-
             height: 100vh;
-
             display: flex;
-
             justify-content: center;
-
             align-items: center;
 
             text-align: center;
-
             padding: 40px;
 
+            position: relative;
+            z-index: 2;
         }
 
         .overlay {
-
             max-width: 900px;
-
         }
 
+        /* TITLE */
         .overlay h1 {
-
-            font-size: 4.8rem;
-
+            font-size: 4.5rem;
             font-weight: 900;
-
             margin-bottom: 20px;
 
-            text-shadow:
-                0 10px 40px rgba(0, 0, 0, .5);
-
+            color: white;
+            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
         }
 
+        /* TEXT BOX */
         .overlay p {
-
             font-size: 1.2rem;
-
             line-height: 1.7;
 
-            color: #e7e7e7;
+            color: #f3f4f6;
+
+            background: rgba(0, 0, 0, 0.45);
+            padding: 18px 22px;
+            border-radius: 16px;
+
+            backdrop-filter: blur(8px);
 
             margin-bottom: 40px;
-
         }
 
+        /* BUTTON */
         .button {
-
             display: inline-block;
-
             padding: 18px 34px;
 
             border-radius: 16px;
 
             text-decoration: none;
-
             font-weight: 900;
-
             font-size: 1.05rem;
 
             color: white;
 
-            background:
-                linear-gradient(90deg,
-                    #338bff,
-                    #4eb0ff);
+            background: linear-gradient(90deg, #338bff, #4eb0ff);
 
             transition: .2s;
-
         }
 
         .button:hover {
-
-            transform:
-                translateY(-3px);
-
+            transform: translateY(-3px);
         }
 
         @media(max-width:800px) {
 
             .overlay h1 {
-
                 font-size: 3rem;
-
             }
 
             .overlay p {
-
                 font-size: 1rem;
-
             }
 
         }
@@ -216,27 +173,18 @@
 
 <body>
 
+    <div class="overlay-bg"></div>
+
     <div class="topbar">
 
         <div class="brand">
-
             HobbyHub
-
         </div>
 
         <div class="auth">
 
-            <a href="login.php">
-
-                Log In
-
-            </a>
-
-            <a href="signup.php">
-
-                Sign Up
-
-            </a>
+            <a href="login.php">Log In</a>
+            <a href="signup.php">Sign Up</a>
 
         </div>
 
@@ -246,26 +194,15 @@
 
         <div class="overlay">
 
-            <h1>
-
-                Discover HobbyHub
-
-            </h1>
+            <h1>Discover HobbyHub</h1>
 
             <p>
-
-                Find people who enjoy the same hobbies as you.
-
-                Join communities for building, coding, photography, music, puzzles, collecting, creativity, and more.
-
-                Create clubs, explore interests, and grow together.
-
+                Find people who share your hobbies and passions.
+                Build, compete, create, and join communities for coding, music, LEGO, photography, gaming, and more.
             </p>
 
             <a class="button" href="login.php">
-
                 Explore Clubs →
-
             </a>
 
         </div>
