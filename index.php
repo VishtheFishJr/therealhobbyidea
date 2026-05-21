@@ -328,7 +328,7 @@ $result = $conn->query($sql);
                         </p>
 
                         <a class="enter" href="<?php echo htmlspecialchars($club["page_link"] ?? "#"); ?>">
-                            Enter Club
+                            View Information
                         </a>
 
                     </div>
