@@ -2,6 +2,11 @@
 include "db.php";
 session_start();
 
+if (isset($_SESSION["user"])) {
+    header("Location: index.php");
+    exit;
+}
+
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
