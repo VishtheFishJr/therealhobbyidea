@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 
 include "db.php";
 
-/* 🔒 FORCE LOGIN */
+/* Force login */
 if (!isset($_SESSION["user"])) {
     header("Location: login.php");
     exit;
@@ -52,32 +52,47 @@ $result = $conn->query($sql);
             left: 0;
             width: 100%;
             padding: 18px 34px;
+
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             background: #10131add;
+
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, .08);
+
             z-index: 1000;
         }
 
         .brand {
             font-size: 1.5rem;
             font-weight: 900;
-            letter-spacing: .5px;
-            background: linear-gradient(90deg, #ffffff, #8fcfff);
+
+            background:
+                linear-gradient(90deg,
+                    #ffffff,
+                    #8fcfff);
+
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .auth a {
             text-decoration: none;
+
             color: white;
+
             padding: 10px 16px;
+
             border-radius: 12px;
+
             background: #1d2635;
-            border: 1px solid rgba(255, 255, 255, .08);
-            transition: .2s;
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
         }
 
         .auth a:hover {
@@ -86,64 +101,99 @@ $result = $conn->query($sql);
 
         .container {
             max-width: 1400px;
+
             margin: auto;
+
             padding: 140px 30px 80px;
+
             text-align: center;
         }
 
         h1 {
             font-size: 3.2rem;
             font-weight: 900;
+
             margin-bottom: 12px;
         }
 
         .subtitle {
-            font-size: 1.05rem;
             color: #9ca3af;
+
             margin-bottom: 60px;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
             gap: 24px;
+
             text-align: left;
         }
 
         @media(max-width:1100px) {
+
             .grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
+
         }
 
         @media(max-width:650px) {
+
             .grid {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
             }
+
         }
 
         .card {
+
             background: #1a2233;
+
             border-radius: 24px;
+
             overflow: hidden;
+
             display: flex;
+
             flex-direction: column;
+
             transition: .25s;
-            border: 1px solid rgba(255, 255, 255, .06);
+
+            border:
+                1px solid rgba(255, 255, 255, .06);
+
         }
 
         .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+
+            transform:
+                translateY(-6px);
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, .35);
+
         }
 
         .club-image {
+
             width: 100%;
+
             height: 250px;
+
             object-fit: contain;
+
             background: #131b2a;
+
             padding: 12px;
+
             display: block;
+
         }
 
         .content {
@@ -151,35 +201,57 @@ $result = $conn->query($sql);
         }
 
         .content h3 {
+
             font-size: 1.45rem;
+
             font-weight: 900;
+
             margin-bottom: 10px;
+
         }
 
         .content p {
+
             color: #cfd5df;
+
             line-height: 1.6;
+
             margin-bottom: 18px;
+
         }
 
         .enter {
+
             display: inline-block;
+
             padding: 12px 18px;
+
             border-radius: 12px;
+
             text-decoration: none;
+
             font-weight: 800;
+
             color: white;
-            background: linear-gradient(90deg, #338bff, #4eb0ff);
-            transition: .2s;
+
+            background:
+                linear-gradient(90deg,
+                    #338bff,
+                    #4eb0ff);
+
         }
 
         .enter:hover {
-            transform: translateY(-2px);
+            transform:
+                translateY(-2px);
         }
 
         .tag {
+
             margin-top: 60px;
+
             color: #7d8697;
+
         }
     </style>
 
@@ -188,18 +260,24 @@ $result = $conn->query($sql);
 <body>
 
     <div class="topbar">
-        <div class="brand">HobbyHub</div>
+
+        <div class="brand">
+            HobbyHub
+        </div>
 
         <div class="auth">
-            <a href="logout.php">Logout</a>
+            <a href="logout.php">
+                Logout
+            </a>
         </div>
+
     </div>
 
     <div class="container">
 
-        <!-- 👤 Personalized title -->
         <h1>
-            Welcome to HobbyHub, <?php echo htmlspecialchars($_SESSION["user"]); ?>
+            Welcome to HobbyHub,
+                        <?php echo htmlspecialchars($_SESSION["user"]); ?>
         </h1>
 
         <div class="subtitle">
@@ -208,21 +286,30 @@ $result = $conn->query($sql);
 
         <div class="grid">
 
-            <?php while ($club = $result->fetch_assoc()) { ?>
+                        <?php while ($club = $result->fetch_assoc()) { ?>
+
+                <?php
+                $image = !empty($club["images"])
+                    ? $club["images"]
+                    : "images/default.jpg";
+                ?>
 
                 <div class="card">
 
-                    <!-- ✅ IMAGE FROM DATABASE -->
-                    <img class="club-image" src="<?php echo htmlspecialchars($club["images"]); ?>"
-                        alt="<?php echo htmlspecialchars($club["name"]); ?>">
+                    <img class="club-image" src="<?php echo htmlspecialchars($image); ?>"
+                        alt="<?php echo htmlspecialchars($club["name"] ?? "Club"); ?>">
 
                     <div class="content">
 
-                        <h3><?php echo htmlspecialchars($club["name"]); ?></h3>
+                        <h3>
+                                                        <?php echo htmlspecialchars($club["name"] ?? "Unnamed Club"); ?>
+                        </h3>
 
-                        <p><?php echo htmlspecialchars($club["description"]); ?></p>
+                        <p>
+                                                        <?php echo htmlspecialchars($club["description"] ?? ""); ?>
+                        </p>
 
-                        <a class="enter" href="<?php echo $club["page_link"]; ?>">
+                        <a class="enter" href="<?php echo htmlspecialchars($club["page_link"] ?? "#"); ?>">
                             Enter Club
                         </a>
 
@@ -230,7 +317,7 @@ $result = $conn->query($sql);
 
                 </div>
 
-            <?php } ?>
+                        <?php } ?>
 
         </div>
 
