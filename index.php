@@ -48,13 +48,18 @@ $result = $conn->query($sql);
 
         .topbar {
             position: fixed;
+
             top: 0;
             left: 0;
+
             width: 100%;
+
             padding: 18px 34px;
 
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
 
             background: #10131add;
@@ -68,7 +73,9 @@ $result = $conn->query($sql);
         }
 
         .brand {
+
             font-size: 1.5rem;
+
             font-weight: 900;
 
             background:
@@ -77,10 +84,12 @@ $result = $conn->query($sql);
                     #8fcfff);
 
             -webkit-background-clip: text;
+
             -webkit-text-fill-color: transparent;
         }
 
         .auth a {
+
             text-decoration: none;
 
             color: white;
@@ -100,6 +109,7 @@ $result = $conn->query($sql);
         }
 
         .container {
+
             max-width: 1400px;
 
             margin: auto;
@@ -110,19 +120,23 @@ $result = $conn->query($sql);
         }
 
         h1 {
+
             font-size: 3.2rem;
+
             font-weight: 900;
 
             margin-bottom: 12px;
         }
 
         .subtitle {
+
             color: #9ca3af;
 
             margin-bottom: 60px;
         }
 
         .grid {
+
             display: grid;
 
             grid-template-columns:
@@ -239,6 +253,7 @@ $result = $conn->query($sql);
                     #338bff,
                     #4eb0ff);
 
+            transition: .2s;
         }
 
         .enter:hover {
@@ -289,9 +304,12 @@ $result = $conn->query($sql);
             <?php while ($club = $result->fetch_assoc()) { ?>
 
                 <?php
-                $image = !empty($club["images"])
-                    ? $club["images"]
-                    : "images/default.jpg";
+                $image =
+                    !empty($club["image"])
+                    ?
+                    $club["image"]
+                    :
+                    "images/default.jpg";
                 ?>
 
                 <div class="card">
