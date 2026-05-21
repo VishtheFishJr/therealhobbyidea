@@ -45,7 +45,7 @@ if (!isset($_SESSION["user"])) {
 
         .right {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
@@ -61,6 +61,7 @@ if (!isset($_SESSION["user"])) {
             border-radius: 10px;
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: 0.2s;
         }
 
         .logout:hover {
@@ -73,7 +74,8 @@ if (!isset($_SESSION["user"])) {
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.6rem;
+            font-weight: 900;
         }
 
         .card {
@@ -82,6 +84,7 @@ if (!isset($_SESSION["user"])) {
             padding: 20px 30px;
             background: #1a2233;
             border-radius: 16px;
+            color: #cfd5df;
         }
     </style>
 </head>
@@ -93,8 +96,7 @@ if (!isset($_SESSION["user"])) {
 
         <div class="right">
             <div class="user">
-                <?php echo $_SESSION["user"]; ?> (
-                <?php echo $_SESSION["role"]; ?>)
+                Welcome, <?php echo htmlspecialchars($_SESSION["user"]); ?>
             </div>
 
             <a class="logout" href="logout.php">Logout</a>
