@@ -13,7 +13,6 @@ if (!isset($_SESSION["user"])) {
 
 $message = "";
 
-/* Convert name → safe subdomain slug */
 function slugify($text)
 {
     $text = strtolower(trim($text));
@@ -30,19 +29,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "All fields are required.";
     } else {
 
-        /* Generate subdomain */
         $slug = slugify($name);
 
         if (empty($slug)) {
             $message = "Invalid club name.";
         } else {
 
-            $page_link = $slug . ".vishthefishjr.me";
+            /* IMPORTANT:
+               Store ONLY slug, not full URL */
+            $page_link = $slug;
+
             $image = "images/default.jpg";
 
-            /* =========================
-               1. INSERT INTO DATABASE
-               ========================= */
             $stmt = $conn->prepare(
                 "INSERT INTO clubs (name, description, page_link, image)
                  VALUES (?, ?, ?, ?)"
@@ -56,18 +54,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if ($stmt->execute()) {
 
-                /* =========================
-                   2. CREATE FOLDER
-                   ========================= */
+                /* Create folder */
                 $dir = "/var/www/html/clubs/" . $slug;
 
                 if (!file_exists($dir)) {
                     mkdir($dir, 0775, true);
                 }
 
-                /* =========================
-                   3. CREATE index.php
-                   ========================= */
+                /* Create index.php */
                 $file = $dir . "/index.php";
 
                 $safeName = htmlspecialchars($name);
@@ -79,58 +73,43 @@ session_start();
 <!DOCTYPE html>
 <html>
 <head>
-    <title>$safeName Club</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f111a;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
-        }
-
-        .box {
-            background: #1a2233;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #b5c0d0;
-            line-height: 1.6;
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #338bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-        }
-
-        a:hover {
-            transform: translateY(-2px);
-        }
-    </style>
+<title>$safeName Club</title>
+<style>
+body {
+    margin:0;
+    font-family:Arial;
+    background:#0f111a;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    text-align:center;
+}
+.box {
+    background:#1a2233;
+    padding:40px;
+    border-radius:20px;
+    max-width:500px;
+}
+a {
+    display:inline-block;
+    margin-top:20px;
+    padding:12px 20px;
+    background:#338bff;
+    color:white;
+    text-decoration:none;
+    border-radius:10px;
+}
+</style>
 </head>
 <body>
 
 <div class='box'>
     <h1>$safeName Club</h1>
     <p>$safeDesc</p>
+
+    <!-- FIXED HOME LINK -->
     <a href='https://vishthefishjr.me/index.php'>Back to Home</a>
 </div>
 
@@ -139,9 +118,6 @@ session_start();
 
                 file_put_contents($file, $content);
 
-                /* =========================
-                   DONE
-                   ========================= */
                 header("Location: index.php");
                 exit;
 
@@ -172,7 +148,7 @@ session_start();
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
         }
 
         .card {
@@ -185,8 +161,7 @@ session_start();
         input,
         textarea {
             width: 100%;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin: 10px 0 20px;
             padding: 14px;
             background: #131b2a;
             border: none;
@@ -211,8 +186,8 @@ session_start();
         }
 
         .note {
-            margin-bottom: 20px;
             color: #9ca3af;
+            margin-bottom: 20px;
         }
 
         .error {
@@ -230,25 +205,18 @@ session_start();
         <h1>Add Club</h1>
 
         <div class="note">
-            A subdomain will be automatically created from the club name.
+            A subdomain will be created automatically: <br>
+            <code>name.vishthefishjr.me</code>
         </div>
 
-        <?php if ($message) { ?>
-            <div class="error">
-                <?php echo $message; ?>
-            </div>
-        <?php } ?>
+                <?php if ($message) { ?>
+            <div class="error"><?php echo $message; ?></div>
+                <?php } ?>
 
         <form method="POST">
-
             <input name="name" placeholder="Club Name" required>
-
             <textarea name="description" placeholder="Club Description" required></textarea>
-
-            <button type="submit">
-                Create Club
-            </button>
-
+            <button type="submit">Create Club</button>
         </form>
 
     </div>
