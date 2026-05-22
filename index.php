@@ -82,6 +82,22 @@ if (
     exit;
 }
 
+/* JOIN CLUB */
+if (isset($_GET["join"]) && isset($_SESSION["user"])) {
+    $userStmt = $conn->prepare("SELECT id FROM users WHERE username=?");
+    $userStmt->bind_param("s", $_SESSION["user"]);
+    $userStmt->execute();
+    $userId = $userStmt->get_result()->fetch_assoc()["id"];
+
+    $clubId = intval($_GET["join"]);
+    $join = $conn->prepare("INSERT IGNORE INTO user_clubs (user_id, club_id) VALUES (?,?)");
+    $join->bind_param("ii", $userId, $clubId);
+    $join->execute();
+
+    header("Location: myclubs.php");
+    exit;
+}
+
 /* Load clubs */
 $sql = "SELECT * FROM clubs";
 $result = $conn->query($sql);
@@ -419,6 +435,12 @@ $result = $conn->query($sql);
 
         <div class="auth">
 
+            <a href="myclubs.php">
+
+                My Clubs
+
+            </a>
+
             <a href="logout.php">
 
                 Logout
@@ -516,11 +538,9 @@ $result = $conn->query($sql);
                             }
                             ?>
 
-                            <a class="enter" href="<?php
-                            echo htmlspecialchars($link);
-                            ?>">
+                            <a class="enter" href="index.php?join=<?= $club["id"] ?>">
 
-                                Enter Club
+                                Explore Club
 
                             </a>
 
