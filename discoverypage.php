@@ -53,7 +53,7 @@
 
             border-bottom: 1px solid rgba(255, 255, 255, .08);
 
-            z-index: 2;
+            z-index: 1000;
         }
 
         .brand {
