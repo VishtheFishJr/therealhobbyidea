@@ -6,7 +6,39 @@ ini_set('display_errors', 1);
 
 include "db.php";
 
-/* Force login */
+/* =========================
+   SUBDOMAIN ROUTING LOGIC
+   ========================= */
+
+$host = $_SERVER['HTTP_HOST']; // guitar.vishthefishjr.me
+$parts = explode('.', $host);
+
+/* detect subdomain */
+$subdomain = null;
+
+if (count($parts) >= 3) {
+    $subdomain = $parts[0];
+}
+
+/* if subdomain exists and not main site */
+if ($subdomain && $subdomain !== "www" && $subdomain !== "vishthefishjr") {
+
+    $clubPath = __DIR__ . "/clubs/" . $subdomain . "/index.php";
+
+    if (file_exists($clubPath)) {
+        include $clubPath;
+        exit;
+    } else {
+        // optional: show 404 or redirect
+        header("Location: /index.php");
+        exit;
+    }
+}
+
+/* =========================
+   FORCE LOGIN (MAIN SITE ONLY)
+   ========================= */
+
 if (!isset($_SESSION["user"])) {
     header("Location: discoverypage.php");
     exit;
@@ -18,19 +50,10 @@ if (
     isset($_SESSION["role"]) &&
     $_SESSION["role"] === "admin"
 ) {
-
     $id = intval($_GET["delete"]);
 
-    $stmt =
-        $conn->prepare(
-            "DELETE FROM clubs WHERE id=?"
-        );
-
-    $stmt->bind_param(
-        "i",
-        $id
-    );
-
+    $stmt = $conn->prepare("DELETE FROM clubs WHERE id=?");
+    $stmt->bind_param("i", $id);
     $stmt->execute();
 
     header("Location: index.php");
@@ -40,7 +63,6 @@ if (
 /* Load clubs */
 $sql = "SELECT * FROM clubs";
 $result = $conn->query($sql);
-
 ?>
 
 <!DOCTYPE html>
