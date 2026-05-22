@@ -12,9 +12,37 @@ if (!isset($_SESSION["user"])) {
     exit;
 }
 
+/* ADMIN DELETE CLUB */
+if (
+    isset($_GET["delete"]) &&
+    isset($_SESSION["role"]) &&
+    $_SESSION["role"] === "admin"
+) {
+
+    $id = intval($_GET["delete"]);
+
+    $stmt =
+        $conn->prepare(
+            "DELETE FROM clubs WHERE id=?"
+        );
+
+    $stmt->bind_param(
+        "i",
+        $id
+    );
+
+    $stmt->execute();
+
+    header("Location: index.php");
+    exit;
+}
+
 /* Load clubs */
-$sql = "SELECT * FROM clubs";
-$result = $conn->query($sql);
+$sql =
+    "SELECT * FROM clubs";
+
+$result =
+    $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +51,7 @@ $result = $conn->query($sql);
 <head>
 
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>HobbyHub</title>
@@ -91,6 +120,11 @@ $result = $conn->query($sql);
 
         }
 
+        .auth {
+            display: flex;
+            gap: 10px;
+        }
+
         .auth a {
 
             text-decoration: none;
@@ -105,14 +139,6 @@ $result = $conn->query($sql);
 
             border:
                 1px solid rgba(255, 255, 255, .08);
-
-            transition: .2s;
-
-        }
-
-        .auth a:hover {
-
-            background: #2a3850;
 
         }
 
@@ -129,21 +155,13 @@ $result = $conn->query($sql);
         }
 
         h1 {
-
             font-size: 3.2rem;
-
-            font-weight: 900;
-
             margin-bottom: 12px;
-
         }
 
         .subtitle {
-
             color: #9ca3af;
-
             margin-bottom: 60px;
-
         }
 
         .grid {
@@ -189,8 +207,6 @@ $result = $conn->query($sql);
 
             flex-direction: column;
 
-            transition: .25s;
-
             border:
                 1px solid rgba(255, 255, 255, .06);
 
@@ -200,9 +216,6 @@ $result = $conn->query($sql);
 
             transform:
                 translateY(-6px);
-
-            box-shadow:
-                0 20px 50px rgba(0, 0, 0, .35);
 
         }
 
@@ -218,37 +231,24 @@ $result = $conn->query($sql);
 
             padding: 12px;
 
-            display: block;
-
         }
 
         .content {
-
             padding: 22px;
-
         }
 
         .content h3 {
-
-            font-size: 1.45rem;
-
-            font-weight: 900;
-
             margin-bottom: 10px;
-
         }
 
         .content p {
-
             color: #cfd5df;
-
-            line-height: 1.6;
-
             margin-bottom: 18px;
-
+            line-height: 1.6;
         }
 
-        .enter {
+        .enter,
+        .remove {
 
             display: inline-block;
 
@@ -262,27 +262,25 @@ $result = $conn->query($sql);
 
             color: white;
 
+            margin-right: 8px;
+
+        }
+
+        .enter {
+
             background:
                 linear-gradient(90deg,
                     #338bff,
                     #4eb0ff);
 
-            transition: .2s;
-
         }
 
-        .enter:hover {
+        .remove {
 
-            transform:
-                translateY(-2px);
-
-        }
-
-        .tag {
-
-            margin-top: 60px;
-
-            color: #7d8697;
+            background:
+                linear-gradient(90deg,
+                    #d62f2f,
+                    #ff5d5d);
 
         }
 
@@ -307,15 +305,11 @@ $result = $conn->query($sql);
                     #338bff,
                     #4eb0ff);
 
-            transition: .2s;
-
         }
 
-        .add-club:hover {
-
-            transform:
-                translateY(-2px);
-
+        .tag {
+            margin-top: 60px;
+            color: #7d8697;
         }
     </style>
 
@@ -345,53 +339,93 @@ $result = $conn->query($sql);
 
             Welcome to HobbyHub,
 
-            <?php echo htmlspecialchars($_SESSION["user"]); ?>
+            <?php
+            echo htmlspecialchars(
+                $_SESSION["user"]
+            );
+            ?>
 
         </h1>
 
         <div class="subtitle">
 
-            Join communities built around creativity, skill, and competition.
+            Join communities built around creativity,
+            skill, and competition.
 
         </div>
 
         <div class="grid">
 
-            <?php while ($club = $result->fetch_assoc()) { ?>
+            <?php while (
+                $club =
+                $result->fetch_assoc()
+            ) { ?>
 
                 <?php
+
                 $image =
-                    !empty($club["image"])
-                    ?
+                    !empty(
                     $club["image"]
+                )
+
+                    ?
+
+                    $club["image"]
+
                     :
+
                     "images/default.jpg";
+
                 ?>
 
                 <div class="card">
 
-                    <img class="club-image" src="<?php echo htmlspecialchars($image); ?>"
-                        alt="<?php echo htmlspecialchars($club["name"] ?? "Club"); ?>">
+                    <img class="club-image" src="<?php echo htmlspecialchars($image); ?>">
 
                     <div class="content">
 
                         <h3>
 
-                            <?php echo htmlspecialchars($club["name"] ?? "Unnamed Club"); ?>
+                            <?php
+                            echo htmlspecialchars(
+                                $club["name"]
+                            );
+                            ?>
 
                         </h3>
 
                         <p>
 
-                            <?php echo htmlspecialchars($club["description"] ?? ""); ?>
+                            <?php
+                            echo htmlspecialchars(
+                                $club["description"]
+                            );
+                            ?>
 
                         </p>
 
-                        <a class="enter" href="<?php echo htmlspecialchars($club["page_link"] ?? "#"); ?>">
+                        <a class="enter" href="<?php echo htmlspecialchars($club["page_link"]); ?>">
 
                             Enter Club
 
                         </a>
+
+                        <?php
+                        if (
+                            isset($_SESSION["role"])
+                            &&
+                            $_SESSION["role"] === "admin"
+                        ) {
+                            ?>
+
+                            <a class="remove" href="index.php?delete=<?php echo $club["id"]; ?>"
+                                onclick="return confirm('Delete this club?')">
+
+                                Remove Club
+
+                            </a>
+
+                        <?php } ?>
 
                     </div>
 
