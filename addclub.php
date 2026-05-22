@@ -87,6 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
 
 <title>{$safeName}</title>
+<link rel="shortcut icon" href="https://vishthefishjr.me/favicon.ico">
 
 <style>
 
@@ -191,6 +192,7 @@ PHP;
 <head>
 
     <title>Add Club</title>
+    <link rel="shortcut icon" href="./favicon.ico">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
 

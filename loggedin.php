@@ -13,6 +13,7 @@ if (!isset($_SESSION["user"])) {
 <head>
     <meta charset="UTF-8">
     <title>HobbyHub</title>
+    <link rel="shortcut icon" href="./favicon.ico">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
