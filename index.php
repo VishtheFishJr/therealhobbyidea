@@ -293,6 +293,9 @@ $result = $conn->query($sql);
 
         .content {
             padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .content h3 {
@@ -320,6 +323,8 @@ $result = $conn->query($sql);
             display: flex;
 
             gap: 10px;
+
+            margin-top: auto;
 
         }
 
