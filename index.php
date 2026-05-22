@@ -477,10 +477,20 @@ $result = $conn->query($sql);
 
                         <div class="button-row">
 
+                            <?php
+                            $link = trim($club["page_link"]);
+
+                            /* Generate subdomain if slug stored */
+                            if (!preg_match('/^https?:\/\//i', $link)) {
+                                $link =
+                                    "https://" .
+                                    $link .
+                                    ".vishthefishjr.me";
+                            }
+                            ?>
+
                             <a class="enter" href="<?php
-                            echo htmlspecialchars(
-                                $club["page_link"]
-                            );
+                            echo htmlspecialchars($link);
                             ?>">
 
                                 Enter Club
