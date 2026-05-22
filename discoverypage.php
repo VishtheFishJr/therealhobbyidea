@@ -42,7 +42,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 18px 34px;
+            padding: 10px 34px;
 
             display: flex;
             justify-content: space-between;

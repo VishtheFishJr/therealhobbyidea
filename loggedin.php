@@ -33,7 +33,7 @@ if (!isset($_SESSION["user"])) {
             justify-content: space-between;
             align-items: center;
 
-            padding: 16px 28px;
+            padding: 10px 34px;
             box-sizing: border-box;
 
             background: #10131add;

@@ -82,7 +82,7 @@ $result = $conn->query($sql);
 
             width: 100%;
 
-            padding: 18px 34px;
+            padding: 10px 34px;
 
             display: flex;
 
