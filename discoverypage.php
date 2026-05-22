@@ -27,7 +27,6 @@
             overflow-x: hidden;
         }
 
-        /* DARK OVERLAY */
         .overlay-bg {
             position: fixed;
             top: 0;
@@ -38,7 +37,6 @@
             z-index: 0;
         }
 
-        /* TOP BAR */
         .topbar {
             position: fixed;
             top: 0;
@@ -63,7 +61,6 @@
             font-weight: 900;
 
             background: linear-gradient(90deg, #fff, #8fcfff);
-
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -73,9 +70,10 @@
             gap: 12px;
         }
 
-        .auth a {
-            display: inline-block;
-            text-decoration: none;
+        /* BUTTON STYLING (NOW REAL BUTTONS) */
+        .auth button {
+            cursor: pointer;
+
             color: white;
 
             padding: 10px 18px;
@@ -90,16 +88,15 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
         }
 
-        .auth a:hover {
+        .auth button:hover {
             transform: translateY(-2px);
             filter: brightness(1.1);
         }
 
-        .auth a:active {
+        .auth button:active {
             transform: translateY(0px);
         }
 
-        /* HERO */
         .hero {
             height: 100vh;
             display: flex;
@@ -117,7 +114,6 @@
             max-width: 900px;
         }
 
-        /* TITLE */
         .overlay h1 {
             font-size: 4.5rem;
             font-weight: 900;
@@ -127,7 +123,6 @@
             text-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
         }
 
-        /* TEXT BOX */
         .overlay p {
             font-size: 1.2rem;
             line-height: 1.7;
@@ -143,7 +138,6 @@
             margin-bottom: 40px;
         }
 
-        /* BUTTON */
         .button {
             display: inline-block;
             padding: 18px 34px;
@@ -166,7 +160,6 @@
         }
 
         @media(max-width:800px) {
-
             .overlay h1 {
                 font-size: 3rem;
             }
@@ -174,7 +167,6 @@
             .overlay p {
                 font-size: 1rem;
             }
-
         }
     </style>
 
@@ -192,8 +184,8 @@
 
         <div class="auth">
 
-            <a href="login.php">Log In</a>
-            <a href="signup.php">Sign Up</a>
+            <button onclick="location.href='login.php'">Log In</button>
+            <button onclick="location.href='signup.php'">Sign Up</button>
 
         </div>
 
