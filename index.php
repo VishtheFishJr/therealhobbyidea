@@ -50,11 +50,33 @@ if (
     isset($_SESSION["role"]) &&
     $_SESSION["role"] === "admin"
 ) {
+
     $id = intval($_GET["delete"]);
 
-    $stmt = $conn->prepare("DELETE FROM clubs WHERE id=?");
+    /* get slug first */
+    $stmt = $conn->prepare("SELECT page_link FROM clubs WHERE id=?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($club = $result->fetch_assoc()) {
+        $slug = basename($club["page_link"]);
+
+        /* delete db row */
+        $delete = $conn->prepare("DELETE FROM clubs WHERE id=?");
+        $delete->bind_param("i", $id);
+        $delete->execute();
+
+        /* delete folder */
+        $dir = "/var/www/html/clubs/" . $slug;
+
+        if (is_dir($dir)) {
+            foreach (glob("$dir/*") as $file) {
+                unlink($file);
+            }
+            rmdir($dir);
+        }
+    }
 
     header("Location: index.php");
     exit;
