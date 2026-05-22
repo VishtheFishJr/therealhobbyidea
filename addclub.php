@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include "db.php";
 
 if (!isset($_SESSION["user"])) {
@@ -12,24 +15,20 @@ $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $name =
-        trim($_POST["name"]);
+    $name = trim($_POST["name"]);
+    $description = trim($_POST["description"]);
+    $page = trim($_POST["page_link"]);
 
-    $description =
-        trim($_POST["description"]);
+    $image = "images/default.jpg";
 
-    $page =
-        trim($_POST["page_link"]);
+    $stmt = $conn->prepare(
+        "INSERT INTO clubs (name, description, page_link, image)
+         VALUES (?, ?, ?, ?)"
+    );
 
-    $image =
-        "images/default.jpg";
-
-    $stmt =
-        $conn->prepare(
-            "INSERT INTO clubs
-(name, description, page_link, image)
-VALUES (?, ?, ?, ?)"
-        );
+    if (!$stmt) {
+        die("SQL Error: " . $conn->error);
+    }
 
     $stmt->bind_param(
         "ssss",
@@ -44,11 +43,13 @@ VALUES (?, ?, ?, ?)"
         header("Location: index.php");
         exit;
 
+    } else {
+
+        $message = "Insert failed: " . $stmt->error;
+
     }
 
-    $message =
-        "Failed to create club.";
-
+    $stmt->close();
 }
 ?>
 
@@ -125,13 +126,9 @@ VALUES (?, ?, ?, ?)"
         button {
 
             width: 100%;
-
             padding: 14px;
-
             border: none;
-
             border-radius: 12px;
-
             font-weight: 800;
 
             background:
@@ -178,11 +175,11 @@ VALUES (?, ?, ?, ?)"
 
                 <?php if ($message) { ?>
 
-            <div class="error">
+                <div class="error">
 
-                                <?php echo $message; ?>
+                                    <?php echo $message; ?>
 
-            </div>
+                </div>
 
                 <?php } ?>
 
