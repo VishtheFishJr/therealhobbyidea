@@ -13,13 +13,28 @@ if (!isset($_SESSION["user"])) {
 
 $message = "";
 
+function slugify($text)
+{
+    $text = strtolower(trim($text));
+    $text = preg_replace('/[^a-z0-9]+/', '', $text);
+    return $text;
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $name = trim($_POST["name"]);
     $description = trim($_POST["description"]);
-    $page = trim($_POST["page_link"]);
+
+    // 🔥 create slug = subdomain name
+    $slug = slugify($name);
+
+    $page_link = $slug . ".vishthefishjr.me";
 
     $image = "images/default.jpg";
+
+    /* =========================
+       1. INSERT INTO DATABASE
+       ========================= */
 
     $stmt = $conn->prepare(
         "INSERT INTO clubs (name, description, page_link, image)
@@ -30,23 +45,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("SQL Error: " . $conn->error);
     }
 
-    $stmt->bind_param(
-        "ssss",
-        $name,
-        $description,
-        $page,
-        $image
-    );
+    $stmt->bind_param("ssss", $name, $description, $page_link, $image);
 
     if ($stmt->execute()) {
+
+        /* =========================
+           2. CREATE CLUB FOLDER
+           ========================= */
+
+        $dir = "/var/www/html/clubs/" . $slug;
+
+        if (!file_exists($dir)) {
+            mkdir($dir, 0775, true);
+        }
+
+        /* =========================
+           3. CREATE index.php FILE
+           ========================= */
+
+        $file = $dir . "/index.php";
+
+        $content = "<?php\nsession_start();\n?>\n<!DOCTYPE html>\n<html>\n<head>\n<title>$name Club</title>\n<style>
+body{margin:0;font-family:Arial;background:#0f111a;color:white;display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;}
+.box{background:#1a2233;padding:40px;border-radius:20px;max-width:500px;}
+a{display:inline-block;margin-top:20px;padding:12px 20px;background:#338bff;color:white;text-decoration:none;border-radius:10px;}
+</style>
+</head>
+<body>
+<div class='box'>
+<h1>$name Club</h1>
+<p>$description</p>
+<a href='https://vishthefishjr.me/index.php'>Back to Home</a>
+</div>
+</body>
+</html>";
+
+        file_put_contents($file, $content);
+
+        /* =========================
+           DONE
+           ========================= */
 
         header("Location: index.php");
         exit;
 
     } else {
-
         $message = "Insert failed: " . $stmt->error;
-
     }
 
     $stmt->close();
@@ -79,13 +123,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             align-items: center;
 
             min-height: 100vh;
-
         }
-
         .card {
-
             width: 500px;
-
             background: #1a2233;
 
             padding: 40px;
@@ -175,11 +215,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <?php if ($message) { ?>
 
-                <div class="error">
+                    <div class="error">
 
-                                    <?php echo $message; ?>
+                                        <?php echo $message; ?>
 
-                </div>
+                    </div>
 
                 <?php } ?>
 
