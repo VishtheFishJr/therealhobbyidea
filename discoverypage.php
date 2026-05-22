@@ -172,7 +172,7 @@
         <div class="auth">
 
             <a href="login.php">
-                Log In1
+                Log In
             </a>
             <a href="signup.php">
                 Sign Up
