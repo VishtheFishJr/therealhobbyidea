@@ -12,7 +12,7 @@ if (!isset($_SESSION["user"])) {
     exit;
 }
 
-/* ADMIN DELETE CLUB */
+/* ADMIN DELETE */
 if (
     isset($_GET["delete"]) &&
     isset($_SESSION["role"]) &&
@@ -38,11 +38,9 @@ if (
 }
 
 /* Load clubs */
-$sql =
-    "SELECT * FROM clubs";
+$sql = "SELECT * FROM clubs";
+$result = $conn->query($sql);
 
-$result =
-    $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
@@ -120,11 +118,6 @@ $result =
 
         }
 
-        .auth {
-            display: flex;
-            gap: 10px;
-        }
-
         .auth a {
 
             text-decoration: none;
@@ -140,6 +133,12 @@ $result =
             border:
                 1px solid rgba(255, 255, 255, .08);
 
+            transition: .2s;
+
+        }
+
+        .auth a:hover {
+            background: #2a3850;
         }
 
         .container {
@@ -155,13 +154,21 @@ $result =
         }
 
         h1 {
+
             font-size: 3.2rem;
+
+            font-weight: 900;
+
             margin-bottom: 12px;
+
         }
 
         .subtitle {
+
             color: #9ca3af;
+
             margin-bottom: 60px;
+
         }
 
         .grid {
@@ -207,6 +214,8 @@ $result =
 
             flex-direction: column;
 
+            transition: .25s;
+
             border:
                 1px solid rgba(255, 255, 255, .06);
 
@@ -216,6 +225,9 @@ $result =
 
             transform:
                 translateY(-6px);
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, .35);
 
         }
 
@@ -231,6 +243,8 @@ $result =
 
             padding: 12px;
 
+            display: block;
+
         }
 
         .content {
@@ -238,21 +252,41 @@ $result =
         }
 
         .content h3 {
+
+            font-size: 1.45rem;
+
+            font-weight: 900;
+
             margin-bottom: 10px;
+
         }
 
         .content p {
+
             color: #cfd5df;
-            margin-bottom: 18px;
+
             line-height: 1.6;
+
+            margin-bottom: 20px;
+
+        }
+
+        .button-row {
+
+            display: flex;
+
+            gap: 10px;
+
         }
 
         .enter,
         .remove {
 
-            display: inline-block;
+            flex: 1;
 
-            padding: 12px 18px;
+            text-align: center;
+
+            padding: 12px;
 
             border-radius: 12px;
 
@@ -261,8 +295,6 @@ $result =
             font-weight: 800;
 
             color: white;
-
-            margin-right: 8px;
 
         }
 
@@ -279,8 +311,24 @@ $result =
 
             background:
                 linear-gradient(90deg,
-                    #d62f2f,
-                    #ff5d5d);
+                    #d92b2b,
+                    #ff6363);
+
+        }
+
+        .enter:hover,
+        .remove:hover {
+
+            transform:
+                translateY(-2px);
+
+        }
+
+        .tag {
+
+            margin-top: 60px;
+
+            color: #7d8697;
 
         }
 
@@ -306,11 +354,6 @@ $result =
                     #4eb0ff);
 
         }
-
-        .tag {
-            margin-top: 60px;
-            color: #7d8697;
-        }
     </style>
 
 </head>
@@ -320,13 +363,17 @@ $result =
     <div class="topbar">
 
         <div class="brand">
+
             HobbyHub
+
         </div>
 
         <div class="auth">
 
             <a href="logout.php">
+
                 Logout
+
             </a>
 
         </div>
@@ -359,9 +406,7 @@ $result =
             <?php while (
                 $club =
                 $result->fetch_assoc()
-            ) { ?>
-
-                <?php
+            ) {
 
                 $image =
                     !empty(
@@ -380,7 +425,11 @@ $result =
 
                 <div class="card">
 
-                    <img class="club-image" src="<?php echo htmlspecialchars($image); ?>">
+                    <img class="club-image" src="<?php
+                    echo htmlspecialchars(
+                        $image
+                    );
+                    ?>" alt="Club">
 
                     <div class="content">
 
@@ -404,28 +453,44 @@ $result =
 
                         </p>
 
-                        <a class="enter" href="<?php echo htmlspecialchars($club["page_link"]); ?>">
+                        <div class="button-row">
 
-                            Enter Club
+                            <a class="enter" href="<?php
+                            echo htmlspecialchars(
+                                $club["page_link"]
+                            );
+                            ?>">
 
-                        </a>
-
-                        <?php
-                        if (
-                            isset($_SESSION["role"])
-                            &&
-                            $_SESSION["role"] === "admin"
-                        ) {
-                            ?>
-
-                            <a class="remove" href="index.php?delete=<?php echo $club["id"]; ?>"
-                                onclick="return confirm('Delete this club?')">
-
-                                Remove Club
+                                Enter Club
 
                             </a>
 
-                        <?php } ?>
+                            <?php
+                            if (
+                                isset(
+                                $_SESSION["role"]
+                            )
+
+                                &&
+
+                                $_SESSION["role"]
+                                ===
+
+                                "admin"
+                            ) {
+                                ?>
+
+                                <a class="remove" href="index.php?delete=<?php
+                                echo $club["id"];
+                                ?>" onclick="return confirm('Delete this club?')">
+
+                                    Remove Club
+
+                                </a>
+
+                            <?php } ?>
+
+                        </div>
 
                     </div>
 
