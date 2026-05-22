@@ -70,31 +70,18 @@
             gap: 12px;
         }
 
-        /* BUTTON STYLING (NOW REAL BUTTONS) */
-        .auth button {
-            cursor: pointer;
-
+        .auth a {
+            text-decoration: none;
             color: white;
-
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 12px;
-
-            background: linear-gradient(90deg, #338bff, #4eb0ff);
-            border: none;
-
-            font-weight: 700;
-
-            transition: 0.2s;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            background: #1d2635;
+            border: 1px solid rgba(255, 255, 255, .08);
+            transition: .2s;
         }
 
-        .auth button:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
-        .auth button:active {
-            transform: translateY(0px);
+        .auth a:hover {
+            background: #2a3850;
         }
 
         .hero {
@@ -184,10 +171,10 @@
 
         <div class="auth">
 
-            <a class="button" href="login.php">
+            <a href="login.php">
                 Log In
             </a>
-            <a class="button" href="signup.php">
+            <a href="signup.php">
                 Sign Up
             </a>
 
