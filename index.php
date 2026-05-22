@@ -538,10 +538,13 @@ $result = $conn->query($sql);
                             }
                             ?>
 
-                            <a class="enter" href="index.php?join=<?= $club["id"] ?>">
+                            <?php
+                            $slug = trim($club["page_link"]);
+                            $clubUrl = "https://" . $slug . ".vishthefishjr.me";
+                            ?>
 
+                            <a class="enter" href="<?= htmlspecialchars($clubUrl) ?>">
                                 Explore Club
-
                             </a>
 
                             <?php
