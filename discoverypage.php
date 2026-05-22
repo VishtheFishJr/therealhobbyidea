@@ -184,8 +184,12 @@
 
         <div class="auth">
 
-            <button onclick="location.href='login.php'">Log In</button>
-            <button onclick="location.href='signup.php'">Sign Up</button>
+            <a class="button" href="login.php">
+                Log In
+            </a>
+            <a class="button" href="signup.php">
+                Sign Up
+            </a>
 
         </div>
 
