@@ -74,20 +74,29 @@
         }
 
         .auth a {
+            display: inline-block;
             text-decoration: none;
             color: white;
 
             padding: 10px 18px;
             border-radius: 12px;
 
-            background: #1d2635;
-            border: 1px solid rgba(255, 255, 255, .08);
+            background: linear-gradient(90deg, #338bff, #4eb0ff);
+            border: none;
 
-            transition: .2s;
+            font-weight: 700;
+
+            transition: 0.2s;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
         }
 
         .auth a:hover {
-            background: #2a3850;
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .auth a:active {
+            transform: translateY(0px);
         }
 
         /* HERO */
