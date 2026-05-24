@@ -155,6 +155,34 @@ $result = $conn->query($sql);
             overflow-x: hidden;
         }
 
+        .topbar {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+
+            padding: 10px 34px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            background: #10131add;
+
+            backdrop-filter: blur(12px);
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, .08);
+
+            z-index: 1000;
+
+        }
+
         .brand {
 
             font-size: 1.5rem;
