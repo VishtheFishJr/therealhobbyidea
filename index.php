@@ -247,7 +247,7 @@ $result = $conn->query($sql);
 
         .subtitle {
 
-            color: #9ca3af;
+            color: #000000ff;
 
             margin-bottom: 60px;
 
