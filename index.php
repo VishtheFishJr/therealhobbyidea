@@ -498,18 +498,13 @@ $result = $conn->query($sql);
             ) {
 
                 $slug = trim($club["page_link"]);
-
-                /* Build image path from slug, fallback to default */
                 $imagePath = "/images/" . $slug . ".jpg";
-                if (!file_exists($_SERVER["DOCUMENT_ROOT"] . $imagePath)) {
-                    $imagePath = "/images/default.jpg";
-                }
 
                 ?>
 
                 <div class="card">
 
-                    <img class="club-image" src="<?= htmlspecialchars($imagePath) ?>" alt="Club">
+                    <img class="club-image" src="<?= htmlspecialchars($imagePath) ?>" alt="Club" onerror="this.src='/images/default.jpg'">
 
                     <div class="content">
 
