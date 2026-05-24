@@ -49,8 +49,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             /* STORE ONLY SLUG */
             $page_link = $slug;
 
-            $image = "images/default.jpg";
+            $image = "images/" . $club["page_link"] . ".jpg";
 
+            if (!file_exists($image)) {
+                $image = "images/default.jpg";
+            }
             $stmt = $conn->prepare(
                 "INSERT INTO clubs (name, description, page_link, image)
                 VALUES (?, ?, ?, ?)"
