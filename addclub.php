@@ -52,6 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $slug = strtolower($club["page_link"]);
             $image = "images/$slug.jpg";
 
+            var_dump($page_link);
+            var_dump($slug);
+            var_dump($image);
             if (!file_exists($image)) {
                 $image = "images/default.jpg";
             }
