@@ -179,7 +179,7 @@ $result = $conn->query($sql);
             border-bottom:
                 1px solid rgba(255, 255, 255, .08);
 
-            z-index: 1000;
+            z-index: 1200;
 
         }
 
