@@ -1,6 +1,17 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_name("HOBBYHUB_SESSION");
+    session_set_cookie_params([
+        "lifetime" => 0,
+        "path" => "/",
+        "domain" => ".vishthefishjr.me",
+        "secure" => false,
+        "httponly" => true
+    ]);
+
+    session_start();
+}
 
 include "db.php";
 
