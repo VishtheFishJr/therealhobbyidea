@@ -181,8 +181,6 @@ $result = $conn->query($sql);
 
             z-index: 1000;
 
-            justify-content: flex-start;
-
         }
 
         .brand {
@@ -202,11 +200,23 @@ $result = $conn->query($sql);
 
         }
 
-        .auth {
-            display: flex;
-            gap: 10px;
-            margin-right: auto;
-            margin-left: 20px;
+        .auth a {
+
+            text-decoration: none;
+
+            color: white;
+
+            padding: 10px 16px;
+
+            border-radius: 12px;
+
+            background: #1d2635;
+
+            border:
+                1px solid rgba(255, 255, 255, .08);
+
+            transition: .2s;
+
         }
 
         .auth a:hover {
