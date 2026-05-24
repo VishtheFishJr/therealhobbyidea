@@ -47,10 +47,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
 
             /* STORE ONLY SLUG */
-            $page_link = $slug;
+            $clubSlug = basename(__DIR__);
 
-            $slug = strtolower($club["page_link"]);
-            $image = "images/$slug.jpg";
+            $imagePath = "/images/$clubSlug.jpg";
+            $serverPath = $_SERVER['DOCUMENT_ROOT'] . $imagePath;
+
+            if (!file_exists($serverPath)) {
+                $imagePath = "/images/default.jpg";
+            }
 
             var_dump($page_link);
             var_dump($slug);
@@ -102,15 +106,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $content = <<<'PHP'
 <?php
+<?php
+
 if (session_status() === PHP_SESSION_NONE) {
     session_name("HOBBYHUB_SESSION");
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
         'domain' => '.vishthefishjr.me',
-        'secure' => false,
+        'secure' => true,
         'httponly' => false
     ]);
+
     session_start();
 }
 
@@ -119,10 +126,20 @@ include "/var/www/html/db.php";
 $clubSlug = basename(__DIR__);
 
 /* LOAD CLUB */
-$stmt = $conn->prepare("SELECT id, name, description, page_link FROM clubs WHERE page_link=? LIMIT 1");
+$stmt = $conn->prepare("
+SELECT id,name,description,page_link
+FROM clubs
+WHERE page_link=?
+LIMIT 1
+");
+
 $stmt->bind_param("s", $clubSlug);
 $stmt->execute();
-$club = $stmt->get_result()->fetch_assoc();
+
+$club =
+    $stmt
+        ->get_result()
+        ->fetch_assoc();
 
 if (!$club) {
     die("Club not found: " . $clubSlug);
@@ -130,120 +147,297 @@ if (!$club) {
 
 /* LOAD USER */
 $userId = null;
-$username = $_SESSION["user"] ?? $_SESSION["username"] ?? null;
+
+/* DEBUG */
+echo "<!-- SESSION: ";
+print_r($_SESSION);
+echo " -->";
+
+/* Try multiple possible session keys */
+$username =
+    $_SESSION["user"]
+    ??
+    $_SESSION["username"]
+    ??
+    null;
 
 if ($username) {
-    $stmt = $conn->prepare("SELECT id FROM users WHERE username=? LIMIT 1");
-    $stmt->bind_param("s", $username);
+
+    $stmt = $conn->prepare("
+SELECT id
+FROM users
+WHERE username=?
+LIMIT 1
+");
+
+    $stmt->bind_param(
+        "s",
+        $username
+    );
+
     $stmt->execute();
-    $userId = $stmt->get_result()->fetch_assoc()["id"] ?? null;
+
+    $userRow =
+        $stmt
+            ->get_result()
+            ->fetch_assoc();
+
+    $userId =
+        $userRow["id"]
+        ??
+        null;
+
 }
 
 /* JOIN / LEAVE */
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["toggle_join"])) {
+
+if (
+    $_SERVER["REQUEST_METHOD"] === "POST"
+    &&
+    isset($_POST["toggle_join"])
+) {
+
     if (!$userId) {
         die("User not found");
     }
 
-    $stmt = $conn->prepare("SELECT * FROM user_clubs WHERE user_id=? AND club_id=?");
-    $stmt->bind_param("ii", $userId, $club["id"]);
+    $stmt =
+        $conn
+            ->prepare("
+SELECT *
+FROM user_clubs
+WHERE user_id=?
+AND club_id=?
+");
+
+    $stmt->bind_param(
+        "ii",
+        $userId,
+        $club["id"]
+    );
+
     $stmt->execute();
-    $joined = $stmt->get_result()->num_rows > 0;
+
+    $joined =
+        $stmt
+            ->get_result()
+            ->num_rows > 0;
 
     if ($joined) {
-        $stmt = $conn->prepare("DELETE FROM user_clubs WHERE user_id=? AND club_id=?");
-        $stmt->bind_param("ii", $userId, $club["id"]);
-        $stmt->execute();
+
+        $stmt =
+            $conn
+                ->prepare("
+DELETE
+FROM user_clubs
+WHERE user_id=?
+AND club_id=?
+");
+
+        $stmt->bind_param(
+            "ii",
+            $userId,
+            $club["id"]
+        );
+
+        if (!$stmt->execute()) {
+            die($stmt->error);
+        }
+
     } else {
-        $stmt = $conn->prepare("INSERT INTO user_clubs (user_id, club_id) VALUES (?,?)");
-        $stmt->bind_param("ii", $userId, $club["id"]);
-        $stmt->execute();
+
+        $stmt =
+            $conn
+                ->prepare("
+INSERT INTO user_clubs
+(user_id,club_id)
+VALUES (?,?)
+");
+
+        $stmt->bind_param(
+            "ii",
+            $userId,
+            $club["id"]
+        );
+
+        if (!$stmt->execute()) {
+            die($stmt->error);
+        }
+
     }
 
-    header("Location: " . $_SERVER["REQUEST_URI"]);
+    header(
+        "Location: " . $_SERVER["REQUEST_URI"]
+    );
+
     exit;
+
 }
 
 /* FINAL STATE */
-$stmt = $conn->prepare("SELECT * FROM user_clubs WHERE user_id=? AND club_id=?");
-$stmt->bind_param("ii", $userId, $club["id"]);
+
+$stmt =
+    $conn
+        ->prepare("
+SELECT *
+FROM user_clubs
+WHERE user_id=?
+AND club_id=?
+");
+
+$stmt->bind_param(
+    "ii",
+    $userId,
+    $club["id"]
+);
+
 $stmt->execute();
-$joined = $stmt->get_result()->num_rows > 0;
+
+$joined =
+    $stmt
+        ->get_result()
+        ->num_rows > 0;
+
 ?>
+
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
     <title><?= htmlspecialchars($club["name"]) ?></title>
-    <link rel="shortcut icon" href="/images/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+
     <style>
         body {
             margin: 0;
+
             background: #10131a;
+
             color: white;
-            font-family: 'Inter', Arial, sans-serif;
+
+            font-family: Arial;
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             height: 100vh;
         }
+
         .card {
+
             background: #1a2233;
+
             padding: 50px;
+
             border-radius: 24px;
+
             text-align: center;
+
             width: 500px;
+
         }
+
         .btn {
+
             padding: 14px 20px;
+
             border: none;
+
             border-radius: 12px;
+
             font-weight: bold;
+
             color: white;
+
             cursor: pointer;
-            transition: 0.2s;
+
         }
+
         .join {
-            background: <?= $joined ? "#2ecc71" : "#338bff" ?>;
+
+            background:
+                <?= $joined
+                    ?
+                    "#2ecc71"
+                    :
+                    "#338bff"
+                    ?>
+            ;
+
         }
-        .join:hover {
-            transform: translateY(-2px);
-        }
+
         .home {
+
             background: #2a3850;
+
             text-decoration: none;
+
             display: inline-block;
+
         }
-        .home:hover {
-            background: #374968;
-        }
+
         .row {
+
             display: flex;
+
             justify-content: center;
+
             gap: 10px;
-            margin-top: 20px;
+
         }
-        h1 { margin-bottom: 12px; }
-        p { color: #cfd5df; margin-bottom: 20px; }
     </style>
+
 </head>
+
 <body>
+
     <div class="card">
-        <h1><?= htmlspecialchars($club["name"]) ?></h1>
-        <p><?= htmlspecialchars($club["description"]) ?></p>
-        
+
+        <h1>
+
+            <?= htmlspecialchars($club["name"]) ?>
+
+        </h1>
+
+        <p>
+
+            <?= htmlspecialchars($club["description"]) ?>
+
+        </p>
+
         <div class="row">
+
             <form method="POST">
+
                 <button class="btn join" name="toggle_join">
-                    <?= $joined ? "Joined ✓" : "Join Club" ?>
+
+                    <?= $joined
+                        ?
+                        "Joined ✓"
+                        :
+                        "Join Club"
+                        ?>
+
                 </button>
+
             </form>
+
             <a class="btn home" href="https://vishthefishjr.me/index.php">
+
                 Back Home
+
             </a>
+
         </div>
+
     </div>
+
 </body>
+
 </html>
 PHP;
 
