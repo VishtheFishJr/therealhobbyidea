@@ -24,6 +24,9 @@ if (!isset($_SESSION["user"])) {
 
 $message = "";
 
+/* =========================
+   SLUG FUNCTION
+   ========================= */
 function slugify($text)
 {
     $text = strtolower(trim($text));
@@ -31,6 +34,9 @@ function slugify($text)
     return $text;
 }
 
+/* =========================
+   CREATE CLUB
+   ========================= */
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $name = trim($_POST["name"]);
@@ -46,27 +52,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $message = "Invalid club name.";
         } else {
 
-            /* STORE ONLY SLUG */
-            $clubSlug = basename(__DIR__);
+            /* FINAL VALUES */
+            $page_link = $slug;
 
-            $imagePath = "/images/$clubSlug.jpg";
+            $imagePath = "/images/$slug.jpg";
             $serverPath = $_SERVER['DOCUMENT_ROOT'] . $imagePath;
 
             if (!file_exists($serverPath)) {
                 $imagePath = "/images/default.jpg";
             }
 
-            var_dump($page_link);
-            var_dump($slug);
-            var_dump($image);
-            if (!file_exists($image)) {
-                $image = "images/default.jpg";
-            }
-
-            $stmt = $conn->prepare(
-                "INSERT INTO clubs (name, description, page_link, image)
-                VALUES (?, ?, ?, ?)"
-            );
+            /* =========================
+               INSERT INTO DATABASE
+               ========================= */
+            $stmt = $conn->prepare("
+                INSERT INTO clubs (name, description, page_link, image)
+                VALUES (?, ?, ?, ?)
+            ");
 
             if (!$stmt) {
                 die($conn->error);
@@ -77,391 +79,171 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $name,
                 $description,
                 $page_link,
-                $image
+                $imagePath
             );
 
             if ($stmt->execute()) {
 
-                $dir =
-                    "/var/www/html/clubs/" .
-                    $slug;
+                /* =========================
+                   CREATE CLUB FOLDER
+                   ========================= */
+                $dir = "/var/www/html/clubs/" . $slug;
 
                 if (!file_exists($dir)) {
-                    mkdir(
-                        $dir,
-                        0775,
-                        true
-                    );
+                    mkdir($dir, 0775, true);
                 }
 
-                $file =
-                    $dir .
-                    "/index.php";
+                $file = $dir . "/index.php";
 
-                $safeName =
-                    htmlspecialchars($name);
-
-                $safeDesc =
-                    htmlspecialchars($description);
-
-                $content = <<<'PHP'
+                /* =========================
+                   CLUB PAGE TEMPLATE
+                   ========================= */
+                $content = <<<PHP
 <?php
-<?php
-
 if (session_status() === PHP_SESSION_NONE) {
-    session_name("HOBBYHUB_SESSION");
-    session_set_cookie_params([
-        'lifetime' => 0,
-        'path' => '/',
-        'domain' => '.vishthefishjr.me',
-        'secure' => true,
-        'httponly' => false
-    ]);
-
     session_start();
 }
 
 include "/var/www/html/db.php";
 
-$clubSlug = basename(__DIR__);
-
-echo $clubSlug;
+\$clubSlug = basename(__DIR__);
 
 /* LOAD CLUB */
-$stmt = $conn->prepare("
-SELECT id,name,description,page_link
-FROM clubs
-WHERE page_link=?
-LIMIT 1
-");
+\$stmt = \$conn->prepare("SELECT * FROM clubs WHERE page_link=? LIMIT 1");
+\$stmt->bind_param("s", \$clubSlug);
+\$stmt->execute();
+\$club = \$stmt->get_result()->fetch_assoc();
 
-$stmt->bind_param("s", $clubSlug);
-$stmt->execute();
-
-$club =
-    $stmt
-        ->get_result()
-        ->fetch_assoc();
-
-if (!$club) {
-    die("Club not found: " . $clubSlug);
+if (!\$club) {
+    die("Club not found: " . \$clubSlug);
 }
 
 /* LOAD USER */
-$userId = null;
+\$userId = null;
+\$username = \$_SESSION["user"] ?? null;
 
-/* DEBUG */
-echo "<!-- SESSION: ";
-print_r($_SESSION);
-echo " -->";
-
-/* Try multiple possible session keys */
-$username =
-    $_SESSION["user"]
-    ??
-    $_SESSION["username"]
-    ??
-    null;
-
-if ($username) {
-
-    $stmt = $conn->prepare("
-SELECT id
-FROM users
-WHERE username=?
-LIMIT 1
-");
-
-    $stmt->bind_param(
-        "s",
-        $username
-    );
-
-    $stmt->execute();
-
-    $userRow =
-        $stmt
-            ->get_result()
-            ->fetch_assoc();
-
-    $userId =
-        $userRow["id"]
-        ??
-        null;
-
+if (\$username) {
+    \$stmt = \$conn->prepare("SELECT id FROM users WHERE username=? LIMIT 1");
+    \$stmt->bind_param("s", \$username);
+    \$stmt->execute();
+    \$row = \$stmt->get_result()->fetch_assoc();
+    \$userId = \$row["id"] ?? null;
 }
 
-/* JOIN / LEAVE */
+/* CHECK JOIN */
+\$joined = false;
 
-if (
-    $_SERVER["REQUEST_METHOD"] === "POST"
-    &&
-    isset($_POST["toggle_join"])
-) {
+if (\$userId) {
+    \$stmt = \$conn->prepare("SELECT 1 FROM user_clubs WHERE user_id=? AND club_id=? LIMIT 1");
+    \$stmt->bind_param("ii", \$userId, \$club["id"]);
+    \$stmt->execute();
+    \$joined = \$stmt->get_result()->num_rows > 0;
+}
 
-    if (!$userId) {
-        die("User not found");
-    }
+/* HANDLE JOIN/LEAVE */
+if (\$_SERVER["REQUEST_METHOD"] === "POST" && isset(\$_POST["toggle_join"])) {
 
-    $stmt =
-        $conn
-            ->prepare("
-SELECT *
-FROM user_clubs
-WHERE user_id=?
-AND club_id=?
-");
+    if (\$userId) {
 
-    $stmt->bind_param(
-        "ii",
-        $userId,
-        $club["id"]
-    );
-
-    $stmt->execute();
-
-    $joined =
-        $stmt
-            ->get_result()
-            ->num_rows > 0;
-
-    if ($joined) {
-
-        $stmt =
-            $conn
-                ->prepare("
-DELETE
-FROM user_clubs
-WHERE user_id=?
-AND club_id=?
-");
-
-        $stmt->bind_param(
-            "ii",
-            $userId,
-            $club["id"]
-        );
-
-        if (!$stmt->execute()) {
-            die($stmt->error);
-        }
-
-    } else {
-
-        $stmt =
-            $conn
-                ->prepare("
-INSERT INTO user_clubs
-(user_id,club_id)
-VALUES (?,?)
-");
-
-        $stmt->bind_param(
-            "ii",
-            $userId,
-            $club["id"]
-        );
-
-        if (!$stmt->execute()) {
-            die($stmt->error);
+        if (\$joined) {
+            \$stmt = \$conn->prepare("DELETE FROM user_clubs WHERE user_id=? AND club_id=?");
+            \$stmt->bind_param("ii", \$userId, \$club["id"]);
+            \$stmt->execute();
+        } else {
+            \$stmt = \$conn->prepare("INSERT INTO user_clubs (user_id, club_id) VALUES (?, ?)");
+            \$stmt->bind_param("ii", \$userId, \$club["id"]);
+            \$stmt->execute();
         }
 
     }
 
-    header(
-        "Location: " . $_SERVER["REQUEST_URI"]
-    );
-
+    header("Location: " . \$_SERVER["REQUEST_URI"]);
     exit;
-
 }
-
-/* FINAL STATE */
-
-$stmt =
-    $conn
-        ->prepare("
-SELECT *
-FROM user_clubs
-WHERE user_id=?
-AND club_id=?
-");
-
-$stmt->bind_param(
-    "ii",
-    $userId,
-    $club["id"]
-);
-
-$stmt->execute();
-
-$joined =
-    $stmt
-        ->get_result()
-        ->num_rows > 0;
-
 ?>
 
 <!DOCTYPE html>
-
 <html>
-
 <head>
+<title><?= htmlspecialchars(\$club["name"]) ?></title>
 
-    <title><?= htmlspecialchars($club["name"]) ?></title>
-
-    <style>
-        body {
-            margin: 0;
-
-            background: #10131a;
-
-            color: white;
-
-            font-family: Arial;
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            height: 100vh;
-        }
-
-        .card {
-
-            background: #1a2233;
-
-            padding: 50px;
-
-            border-radius: 24px;
-
-            text-align: center;
-
-            width: 500px;
-
-        }
-
-        .btn {
-
-            padding: 14px 20px;
-
-            border: none;
-
-            border-radius: 12px;
-
-            font-weight: bold;
-
-            color: white;
-
-            cursor: pointer;
-
-        }
-
-        .join {
-
-            background:
-                <?= $joined
-                    ?
-                    "#2ecc71"
-                    :
-                    "#338bff"
-                    ?>
-            ;
-
-        }
-
-        .home {
-
-            background: #2a3850;
-
-            text-decoration: none;
-
-            display: inline-block;
-
-        }
-
-        .row {
-
-            display: flex;
-
-            justify-content: center;
-
-            gap: 10px;
-
-        }
-    </style>
-
+<style>
+body{
+    margin:0;
+    background:#10131a;
+    color:white;
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.card{
+    background:#1a2233;
+    padding:50px;
+    border-radius:24px;
+    text-align:center;
+    width:500px;
+}
+.btn{
+    padding:14px 20px;
+    border:none;
+    border-radius:12px;
+    font-weight:bold;
+    color:white;
+    cursor:pointer;
+}
+.join{
+    background:<?= \$joined ? "#2ecc71" : "#338bff" ?>;
+}
+.home{
+    background:#2a3850;
+    text-decoration:none;
+    display:inline-block;
+}
+.row{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+</style>
 </head>
 
 <body>
 
-    <div class="card">
+<div class="card">
 
-        <h1>
+<h1><?= htmlspecialchars(\$club["name"]) ?></h1>
+<p><?= htmlspecialchars(\$club["description"]) ?></p>
 
-            <?= htmlspecialchars($club["name"]) ?>
+<div class="row">
 
-        </h1>
+<form method="POST">
+<button class="btn join" name="toggle_join">
+<?= \$joined ? "Joined ✓" : "Join Club" ?>
+</button>
+</form>
 
-        <p>
+<a class="btn home" href="https://vishthefishjr.me/index.php">
+Back Home
+</a>
 
-            <?= htmlspecialchars($club["description"]) ?>
+</div>
 
-        </p>
-
-        <div class="row">
-
-            <form method="POST">
-
-                <button class="btn join" name="toggle_join">
-
-                    <?= $joined
-                        ?
-                        "Joined ✓"
-                        :
-                        "Join Club"
-                        ?>
-
-                </button>
-
-            </form>
-
-            <a class="btn home" href="https://vishthefishjr.me/index.php">
-
-                Back Home
-
-            </a>
-
-        </div>
-
-    </div>
+</div>
 
 </body>
-
 </html>
 PHP;
 
-                file_put_contents(
-                    $file,
-                    $content
-                );
+                file_put_contents($file, $content);
 
-                header(
-                    "Location: index.php"
-                );
-
+                header("Location: index.php");
                 exit;
 
             } else {
-
-                $message =
-                    $stmt->error;
-
+                $message = $stmt->error;
             }
-
-            $stmt->close();
         }
     }
 }
@@ -471,110 +253,53 @@ PHP;
 <html>
 
 <head>
-
     <title>Add Club</title>
-    <link rel="shortcut icon" href="/images/favicon.ico">
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
 
     <style>
         body {
             background: #10131a;
             color: white;
-
-            font-family: Inter;
-
+            font-family: Arial;
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
             height: 100vh;
-
         }
 
         .card {
-
             width: 500px;
-
             background: #1a2233;
-
             padding: 40px;
-
             border-radius: 24px;
-
         }
 
         input,
         textarea {
-
             width: 100%;
-
             padding: 14px;
-
-            margin-top: 10px;
-
-            margin-bottom: 20px;
-
+            margin: 10px 0 20px;
             background: #131b2a;
-
             border: none;
-
             border-radius: 12px;
-
             color: white;
-
-        }
-
-        textarea {
-
-            height: 150px;
-
-            resize: none;
-
         }
 
         button {
-
             width: 100%;
-
             padding: 14px;
-
             border: none;
-
             border-radius: 12px;
-
             font-weight: 800;
-
-            background:
-                linear-gradient(90deg,
-                    #338bff,
-                    #4eb0ff);
-
+            background: linear-gradient(90deg, #338bff, #4eb0ff);
             color: white;
-
             cursor: pointer;
-
-        }
-
-        .note {
-
-            color: #9ca3af;
-
-            margin-bottom: 20px;
-
         }
 
         .error {
-
             color: #ff8080;
-
-            margin-bottom: 20px;
-
+            margin-bottom: 15px;
         }
     </style>
-
 </head>
 
 <body>
@@ -583,38 +308,14 @@ PHP;
 
         <h1>Add Club</h1>
 
-        <div class="note">
-
-            Creates:
-
-            <br><br>
-
-            <code>clubname.vishthefishjr.me</code>
-
-        </div>
-
-        <?php if ($message) { ?>
-
-            <div class="error">
-
-                <?= $message ?>
-
-            </div>
-
-        <?php } ?>
+        <?php if ($message): ?>
+            <div class="error"><?= $message ?></div>
+        <?php endif; ?>
 
         <form method="POST">
-
             <input name="name" placeholder="Club Name" required>
-
             <textarea name="description" placeholder="Club Description" required></textarea>
-
-            <button>
-
-                Create Club
-
-            </button>
-
+            <button>Create Club</button>
         </form>
 
     </div>
