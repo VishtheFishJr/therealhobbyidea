@@ -125,6 +125,8 @@ include "/var/www/html/db.php";
 
 $clubSlug = basename(__DIR__);
 
+echo $clubSlug;
+
 /* LOAD CLUB */
 $stmt = $conn->prepare("
 SELECT id,name,description,page_link
