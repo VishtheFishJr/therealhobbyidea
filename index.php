@@ -217,7 +217,7 @@ $result = $conn->query($sql);
 
             transition: .2s;
 
-            margin-left: 6px;
+            margin-left: 15px;
 
         }
 
