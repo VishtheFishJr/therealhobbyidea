@@ -166,6 +166,7 @@ $joined = $stmt->get_result()->num_rows > 0;
 <html>
 <head>
     <title><?= htmlspecialchars($club["name"]) ?></title>
+    <link rel="shortcut icon" href="/images/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -268,7 +269,7 @@ PHP;
 <head>
 
     <title>Add Club</title>
-    <link rel="shortcut icon" href="./favicon.ico">
+    <link rel="shortcut icon" href="/images/favicon.ico">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
 
