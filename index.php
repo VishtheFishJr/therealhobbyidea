@@ -138,38 +138,21 @@ $result = $conn->query($sql);
         }
 
         body {
-            background: #10131a;
+            background:
+                linear-gradient(rgba(16, 19, 26, .78),
+                    rgba(16, 19, 26, .88)),
+                url("/images/indexlanding.png");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+
             color: white;
+
             min-height: 100vh;
+
             overflow-x: hidden;
-        }
-
-        .topbar {
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-
-            padding: 10px 34px;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            background: #10131add;
-
-            backdrop-filter: blur(12px);
-
-            border-bottom:
-                1px solid rgba(255, 255, 255, .08);
-
-            z-index: 1000;
-
         }
 
         .brand {
