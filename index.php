@@ -181,6 +181,8 @@ $result = $conn->query($sql);
 
             z-index: 1000;
 
+            justify-content: flex-start;
+
         }
 
         .brand {
@@ -200,23 +202,11 @@ $result = $conn->query($sql);
 
         }
 
-        .auth a {
-
-            text-decoration: none;
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 12px;
-
-            background: #1d2635;
-
-            border:
-                1px solid rgba(255, 255, 255, .08);
-
-            transition: .2s;
-
+        .auth {
+            display: flex;
+            gap: 10px;
+            margin-right: auto;
+            margin-left: 20px;
         }
 
         .auth a:hover {
@@ -285,22 +275,17 @@ $result = $conn->query($sql);
         }
 
         .card {
-
-            background: #1a2233;
-
+            background: rgba(26, 34, 51, 0.72);
             border-radius: 24px;
-
             overflow: hidden;
-
             display: flex;
-
             flex-direction: column;
+
+            border: 1px solid rgba(255, 255, 255, 0.05);
 
             transition: .25s;
 
-            border:
-                1px solid rgba(255, 255, 255, .06);
-
+            backdrop-filter: blur(10px);
         }
 
         .card:hover {
@@ -314,19 +299,18 @@ $result = $conn->query($sql);
         }
 
         .club-image {
-
             width: 100%;
-
             height: 250px;
-
             object-fit: contain;
-
             background: #131b2a;
-
             padding: 12px;
-
             display: block;
 
+            /* blending */
+            opacity: 0.92;
+            filter: contrast(0.95) saturate(0.9);
+
+            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
         }
 
         .content {
