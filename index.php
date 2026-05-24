@@ -164,7 +164,7 @@ $result = $conn->query($sql);
 
             width: 100%;
 
-            padding: 10px 34px;
+            padding: 18px 34px;
 
             display: flex;
 
@@ -179,7 +179,7 @@ $result = $conn->query($sql);
             border-bottom:
                 1px solid rgba(255, 255, 255, .08);
 
-            z-index: 1200;
+            z-index: 1000;
 
         }
 
@@ -415,7 +415,7 @@ $result = $conn->query($sql);
 
             margin-top: 60px;
 
-            color: #7d8697;
+            color: #000000ff;
 
         }
 
