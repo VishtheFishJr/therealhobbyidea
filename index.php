@@ -310,19 +310,32 @@ $result = $conn->query($sql);
 
         }
 
+        .card-image-wrap {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
         .club-image {
             width: 100%;
-            height: 250px;
-            object-fit: contain;
-            background: #131b2a;
-            padding: 12px;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
             display: block;
 
-            /* blending */
-            opacity: 0.92;
-            filter: contrast(0.95) saturate(0.9);
-
-            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+            /* fade bottom to nothing before text */
+            mask-image: linear-gradient(
+                to bottom,
+                black 50%,
+                transparent 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                black 50%,
+                transparent 100%
+            );
         }
 
         .content {
@@ -503,7 +516,9 @@ $result = $conn->query($sql);
 
                 <div class="card">
 
-                    <img class="club-image" src="<?= htmlspecialchars($image) ?>" alt="Club">
+                    <div class="card-image-wrap">
+                        <img class="club-image" src="<?= htmlspecialchars($image) ?>" alt="Club">
+                    </div>
 
                     <div class="content">
 
