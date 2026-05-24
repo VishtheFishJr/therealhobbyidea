@@ -139,8 +139,8 @@ $result = $conn->query($sql);
 
         body {
             background:
-                linear-gradient(rgba(16, 19, 26, .78),
-                    rgba(16, 19, 26, .88)),
+                linear-gradient(rgba(16, 19, 26, .35),
+                    rgba(16, 19, 26, .50)),
                 url("/images/indexlanding.png");
 
             background-size: cover;
