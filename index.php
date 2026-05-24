@@ -217,6 +217,8 @@ $result = $conn->query($sql);
 
             transition: .2s;
 
+            margin-left: -6px;
+
         }
 
         .auth a:hover {
