@@ -497,14 +497,13 @@ $result = $conn->query($sql);
                 $result->fetch_assoc()
             ) {
 
-                $slug = trim($club["page_link"]);
-                $imagePath = "/images/" . $slug . ".jpg";
+                $image = !empty($club["image"]) ? $club["image"] : "images/default.jpg";
 
                 ?>
 
                 <div class="card">
 
-                    <img class="club-image" src="<?= htmlspecialchars($imagePath) ?>" alt="Club" onerror="this.src='/images/default.jpg'">
+                    <img class="club-image" src="<?= htmlspecialchars($image) ?>" alt="Club">
 
                     <div class="content">
 

@@ -55,12 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             /* FINAL VALUES */
             $page_link = $slug;
 
-            $imagePath = "/images/$slug.jpg";
-            $serverPath = $_SERVER['DOCUMENT_ROOT'] . $imagePath;
-
-            if (!file_exists($serverPath)) {
-                $imagePath = "/images/default.jpg";
-            }
+            /* Always store slug-based image path — image can be added later */
+            $imagePath = "images/" . $slug . ".jpg";
 
             /* =========================
                INSERT INTO DATABASE
