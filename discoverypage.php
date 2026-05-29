@@ -23,7 +23,7 @@
         body {
             min-height: 100vh;
             color: white;
-            background: url("landing.jpg") center/cover no-repeat;
+            background: url("/images/landing.jpg") center/cover no-repeat;
             overflow-x: hidden;
         }
 
