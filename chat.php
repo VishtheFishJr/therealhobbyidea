@@ -108,7 +108,7 @@ $userList = $users->get_result();
 
         <div class="input">
             <input type="text" id="message">
-            <button onclick="sendMessage()">Send</button>
+            <button onclick="sendMessage()">Send1</button>
         </div>
 
     </div>
